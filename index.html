@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-bs-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>شئون التجنيد — جامعة اللوتس</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc,
+    query, where, orderBy, limit, writeBatch, serverTimestamp, onSnapshot, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBLJtaZBiOcAuhTP7TBPXjtp-ETJqLTXuY",
+    authDomain: "tagneed-65d9c.firebaseapp.com",
+    projectId: "tagneed-65d9c",
+    storageBucket: "tagneed-65d9c.firebasestorage.app",
+    messagingSenderId: "520830596850",
+    appId: "1:520830596850:web:8b2d83b523a19d8ddd026b"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.__db = db;
+  window.__fb = { collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc,
+                  query, where, orderBy, limit, writeBatch, serverTimestamp, onSnapshot, addDoc };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+  /* ═══════════ الهوية البصرية ═══════════ */
+  :root {
+    --ink: #0a0f1e;
+    --ink-2: #0f1730;
+    --ink-3: #141d3a;
+    --surface: rgba(23, 32, 60, 0.62);
+    --surface-2: rgba(255,255,255,0.045);
+    --surface-3: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.09);
+    --border-2: rgba(255,255,255,0.14);
+    --text: #eaf0ff;
+    --muted: #97a3c7;
+    --muted-2: #6a769b;
+    --brand-1: #5b8cff;
+    --brand-2: #9d6bff;
+    --brand-3: #ffc857;
+    --success: #34d399;
+    --danger: #f87171;
+    --warn: #fbbf24;
+    --info: #38bdf8;
+    --radius: 16px;
+    --radius-sm: 11px;
+    --radius-lg: 22px;
+    --shadow-sm: 0 4px 14px rgba(0,0,0,0.25);
+    --shadow: 0 10px 32px rgba(0,0,0,0.35);
+    --shadow-lg: 0 24px 60px rgba(0,0,0,0.5);
+    --glow: 0 0 0 1px rgba(91,140,255,.18), 0 8px 32px rgba(91,140,255,.25);
+    --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  }
+  html[data-bs-theme="light"] {
+    --ink: #f6f8ff; --ink-2: #eef2ff; --ink-3: #e3e9ff;
+    --surface: rgba(255,255,255,0.9); --surface-2: rgba(20,30,70,0.04);
+    --surface-3: rgba(20,30,70,0.07);
+    --border: rgba(20,30,70,0.10); --border-2: rgba(20,30,70,0.16);
+    --text: #0f1636; --muted: #56618a; --muted-2: #7a84a8;
+    --shadow-sm: 0 4px 14px rgba(30,50,120,0.08);
+    --shadow: 0 10px 32px rgba(30,50,120,0.12);
+    --shadow-lg: 0 24px 60px rgba(30,50,120,0.18);
+    --glow: 0 0 0 1px rgba(91,140,255,.15), 0 8px 32px rgba(91,140,255,.15);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--ink);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background .4s ease, color .3s ease;
+  }
+  body::before {
+    content:""; position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(1100px 600px at 85% -5%, rgba(157,107,255,.22), transparent 55%),
+      radial-gradient(900px 500px at 0% 20%, rgba(91,140,255,.18), transparent 55%),
+      radial-gradient(800px 500px at 60% 110%, rgba(255,200,87,.10), transparent 60%),
+      linear-gradient(180deg, var(--ink), var(--ink-2));
+    transition: background .5s ease;
+  }
+
+  ::selection { background: rgba(91,140,255,.35); color: #fff; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.20); }
+
+  /* ═══════════ Splash ═══════════ */
+  #splash {
+    position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
+    background: radial-gradient(600px 400px at 50% 40%, rgba(157,107,255,.18), transparent 60%), var(--ink);
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; }
+  .splash-mark {
+    width: 88px; height: 88px; border-radius: 26px; display: grid; place-items: center;
+    background: conic-gradient(from 0deg, var(--brand-1), var(--brand-2), var(--brand-3), var(--brand-1));
+    animation: spin 2.6s linear infinite;
+    box-shadow: 0 0 80px rgba(91,140,255,0.55), inset 0 0 20px rgba(255,255,255,0.15);
+  }
+  .splash-mark i { font-size: 40px; color: #fff; animation: spinBack 2.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spinBack { to { transform: rotate(-360deg); } }
+
+  /* ═══════════ Header ═══════════ */
+  .app-header {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(10,15,30,.88), rgba(10,15,30,.55));
+    backdrop-filter: saturate(1.2) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  html[data-bs-theme="light"] .app-header {
+    background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.65));
+  }
+  .brand-mark {
+    width: 42px; height: 42px; border-radius: 12px;
+    display: grid; place-items: center; position: relative;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    color: #fff; font-weight: 900; font-size: 17px;
+    box-shadow: 0 8px 24px rgba(91,140,255,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .brand-mark::after {
+    content:""; position:absolute; inset:-3px; border-radius: 15px;
+    background: conic-gradient(from 180deg, var(--brand-1), var(--brand-2), var(--brand-3), var(--brand-1));
+    opacity:.35; filter: blur(8px); z-index: -1;
+  }
+  .brand-title { font-weight: 800; font-size: 16px; line-height: 1.15; letter-spacing: -.2px; }
+  .brand-sub { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+  /* شعار المصمم أعلى التطبيق */
+  .designer-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: linear-gradient(135deg, rgba(91,140,255,.15), rgba(157,107,255,.15));
+    border: 1px solid rgba(157,107,255,.35);
+    font-size: 12.5px; font-weight: 700;
+    position: relative;
+    overflow: hidden;
+  }
+  .designer-badge::before {
+    content:""; position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: badgeShine 4s ease-in-out infinite;
+  }
+  @keyframes badgeShine {
+    0%, 60% { transform: translateX(-100%); }
+    100%    { transform: translateX(100%); }
+  }
+  .designer-badge i {
+    color: var(--brand-3);
+    filter: drop-shadow(0 0 6px rgba(255,200,87,.55));
+    position: relative;
+  }
+  .designer-badge span {
+    background: linear-gradient(90deg, #7aa3ff, #b98cff, #ffd57a, #7aa3ff);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 5s linear infinite;
+    position: relative;
+  }
+  @keyframes shimmer { to { background-position: 300% 0; } }
+
+  /* ═══════════ Buttons ═══════════ */
+  .btn { border-radius: var(--radius-sm); font-weight: 600; font-size: 14px; transition: all .18s ease; }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    color: #fff; border: none;
+    box-shadow: 0 6px 20px rgba(91,140,255,.35), inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  .btn-accent:hover { color:#fff; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(157,107,255,.5); }
+  .btn-accent:active { transform: translateY(0); }
+  .btn-soft {
+    background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-soft:hover { background: var(--surface-3); color: var(--text); border-color: var(--border-2); }
+  .btn-ghost { background: transparent; color: var(--muted); border: none; }
+  .btn-ghost:hover { color: var(--text); background: var(--surface-2); }
+
+  /* ═══════════ Cards ═══════════ */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(16px) saturate(1.1);
+    box-shadow: var(--shadow);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .panel-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg), var(--glow);
+    border-color: var(--border-2);
+  }
+
+  /* Stat cards */
+  .stat-card {
+    cursor: pointer;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp .5s both;
+  }
+  .stat-card::after {
+    content:""; position:absolute; top: 0; right: 0; width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(91,140,255,.18), transparent 70%);
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .stat-card:hover::after { opacity: 1.4; }
+  .stat-icon {
+    width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
+    font-size: 21px;
+    background: linear-gradient(135deg, rgba(91,140,255,.22), rgba(157,107,255,.22));
+    color: var(--brand-1); border: 1px solid rgba(91,140,255,.2);
+  }
+  .stat-num {
+    font-size: 32px; font-weight: 900; line-height: 1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--text), #b8c6ff);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-label { color: var(--muted); font-size: 12.5px; font-weight: 600; margin-top: 6px; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═══════════ Nav tabs ═══════════ */
+  .nav-tab {
+    color: var(--muted); border: 1px solid transparent; background: transparent;
+    border-radius: var(--radius-sm); padding: 9px 15px; font-weight: 600;
+    transition: all .18s ease; white-space: nowrap; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--surface-2); }
+  .nav-tab.active {
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(91,140,255,.20), rgba(157,107,255,.20));
+    border-color: rgba(157,107,255,.4);
+    box-shadow: 0 4px 16px rgba(91,140,255,.18);
+  }
+
+  /* ═══════════ Inputs ═══════════ */
+  .form-control, .form-select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    padding: 10px 14px;
+    transition: all .18s ease;
+  }
+  .form-control:focus, .form-select:focus {
+    background: var(--surface-3);
+    color: var(--text);
+    border-color: var(--brand-1);
+    box-shadow: 0 0 0 3px rgba(91,140,255,.16);
+  }
+  .form-control::placeholder { color: var(--muted-2); }
+  .form-label { font-weight: 600; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+
+  /* ═══════════ Table ═══════════ */
+  .table-app { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+  .table-app thead th {
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: 12px; font-weight: 700;
+    padding: 14px 16px; text-align: right;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    position: sticky; top: 0; z-index: 2;
+    letter-spacing: .2px;
+    text-transform: none;
+  }
+  .table-app tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .table-app tbody tr { transition: background .15s ease; }
+  .table-app tbody tr:hover { background: var(--surface-2); cursor: pointer; }
+  .table-app tbody tr:last-child td { border-bottom: none; }
+
+  /* ═══════════ Toast ═══════════ */
+  #toastBox {
+    position: fixed; top: 16px; left: 16px; z-index: 9000;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .toast-app {
+    background: rgba(20,29,58,.94);
+    border: 1px solid var(--border-2);
+    backdrop-filter: blur(20px);
+    padding: 12px 16px; border-radius: 13px;
+    display: flex; align-items: flex-start; gap: 10px;
+    box-shadow: var(--shadow-lg);
+    animation: toastIn .3s cubic-bezier(.2,.9,.3,1.3) both;
+    min-width: 260px; max-width: 400px;
+    font-size: 13.5px;
+  }
+  html[data-bs-theme="light"] .toast-app { background: rgba(255,255,255,.96); }
+  .toast-app.out { animation: toastOut .25s ease both; }
+  @keyframes toastIn { from{ transform: translateX(-30px); opacity:0; } to{ transform: translateX(0); opacity:1; } }
+  @keyframes toastOut { to { transform: translateX(-30px); opacity:0; } }
+
+  /* ═══════════ Sidebar ═══════════ */
+  .side-sheet {
+    position: fixed; top: 0; right: 0; height: 100%; width: 280px; z-index: 8000;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    padding: 22px; overflow-y: auto;
+    box-shadow: -20px 0 60px rgba(0,0,0,.4);
+  }
+  .side-sheet.open { transform: translateX(0); }
+
+  /* ═══════════ Modal ═══════════ */
+  .modal-content {
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    color: var(--text);
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-header, .modal-footer { border-color: var(--border); padding: 16px 22px; }
+  .modal-body { padding: 22px; }
+  .modal-title { font-weight: 800; font-size: 16px; }
+  .btn-close-white { filter: invert(1) brightness(1.5); opacity: .6; }
+  .btn-close-white:hover { opacity: 1; }
+  html[data-bs-theme="light"] .btn-close-white { filter: none; opacity: .5; }
+
+  /* ═══════════ Badges ═══════════ */
+  .chip {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700;
+    background: var(--surface-2); border: 1px solid var(--border);
+  }
+  .badge-soft-success { background: rgba(52,211,153,.14); color: var(--success); border:1px solid rgba(52,211,153,.3); }
+  .badge-soft-warn { background: rgba(251,191,36,.14); color: var(--warn); border:1px solid rgba(251,191,36,.3); }
+  .badge-soft-danger { background: rgba(248,113,113,.14); color: var(--danger); border:1px solid rgba(248,113,113,.3); }
+  .badge-soft-info { background: rgba(91,140,255,.14); color: var(--brand-1); border:1px solid rgba(91,140,255,.3); }
+
+  .kbd-hint {
+    font-size: 11px; color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px;
+    background: var(--surface-2); font-weight: 700;
+  }
+  .scroll-x { overflow-x: auto; }
+
+  /* ═══════════ Upload ═══════════ */
+  .drop-zone {
+    border: 1.5px dashed var(--border-2) !important;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    transition: all .22s ease;
+    cursor: pointer;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--brand-1) !important;
+    background: rgba(91,140,255,.06);
+    transform: translateY(-1px);
+  }
+  .file-pill {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 13px; animation: fadeUp .3s both;
+  }
+  .file-pill .rm { cursor: pointer; color: var(--danger); opacity: .7; transition: opacity .2s; }
+  .file-pill .rm:hover { opacity: 1; }
+
+  /* ═══════════ Progress ═══════════ */
+  .progress { background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .progress-bar { transition: width .3s ease; }
+
+  /* ═══════════ Reports — NEW ═══════════ */
+  .report-card {
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all .25s ease;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .report-card:hover {
+    border-color: var(--border-2);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow), var(--glow);
+  }
+  .report-card-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 20px;
+    background: linear-gradient(135deg, rgba(91,140,255,.15), rgba(157,107,255,.15));
+    color: var(--brand-1);
+    margin-bottom: 14px;
+    border: 1px solid rgba(91,140,255,.2);
+  }
+  .report-card-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .report-card-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .report-card-value {
+    font-size: 30px; font-weight: 900; line-height: 1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--text), #b8c6ff);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .report-card-action {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700;
+    color: var(--brand-1);
+    margin-top: 8px;
+    opacity: .85;
+    transition: opacity .2s;
+  }
+  .report-card:hover .report-card-action { opacity: 1; }
+
+  /* Report status list */
+  .report-status-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 14px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    margin-bottom: 8px;
+    font-size: 13px;
+    transition: background .2s;
+  }
+  .report-status-row:hover { background: var(--surface-3); }
+  .report-status-row .count {
+    font-weight: 800; font-size: 14px;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 2px 10px; border-radius: 6px;
+  }
+
+  /* ═══════════ Print ═══════════ */
+  @media print {
+    body { background: #fff !important; color: #000 !important; }
+    body::before { display: none; }
+    .no-print, .app-header, .side-sheet, #toastBox, .btn, .nav-tab { display: none !important; }
+    .modal-content { background:#fff !important; color:#000 !important; border:none !important; box-shadow:none !important; }
+    .panel { box-shadow:none !important; border:1px solid #ccc !important; background:#fff !important; }
+    .table-app thead th { background:#eee !important; color:#000 !important; }
+    .table-app tbody td { border-color:#ddd !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+
+  /* Small devices */
+  @media (max-width: 576px) {
+    .stat-card { padding: 15px; }
+    .stat-num { font-size: 26px; }
+    .stat-icon { width: 40px; height: 40px; font-size: 18px; }
+    .brand-title { font-size: 14px; }
+    .brand-sub { font-size: 10.5px; }
+    .designer-badge { padding: 5px 10px; font-size: 11px; }
+    .designer-badge .full-text { display: none; }
+  }
+</style>
+<style id="university-workspace-theme">
+/* University workspace visual theme, presentation only. */
+:root{--ink:#101c29;--ink-2:#172738;--ink-3:#22374b;--surface:#172738;--surface-2:#1c3043;--surface-3:#294257;--border:#2d4356;--border-2:#496075;--text:#edf4fa;--muted:#b3c4d2;--muted-2:#8fa6b9;--brand-1:#83c7c1;--brand-2:#509d97;--brand-3:#d4b376;--success:#7cd4b3;--danger:#ff9ba3;--warn:#edc474;--info:#8ec9ed;--radius:16px;--radius-sm:9px;--shadow:0 5px 22px #0000000a;--shadow-sm:0 3px 12px #0000000a;--shadow-lg:0 20px 60px #00000030;--glow:none}
+html[data-bs-theme="light"]{--ink:#f4f5f7;--ink-2:#fff;--ink-3:#eaf1f4;--surface:#fff;--surface-2:#f6f8fa;--surface-3:#eaf2f4;--border:#e2e7ec;--border-2:#c3d0da;--text:#182e45;--muted:#576d82;--muted-2:#6b8194;--brand-1:#136b70;--brand-2:#0c5156;--brand-3:#987337;--success:#197354;--danger:#b33446;--warn:#87610b;--info:#22688d;--shadow:0 4px 18px #20354b04;--shadow-sm:0 3px 12px #20354b04;--shadow-lg:0 20px 60px #20354b20;--glow:none}
+html,body{background:var(--ink);color:var(--text);line-height:1.8}body::before{display:none}.app-header,html[data-bs-theme="light"] .app-header{position:relative;background:#123447;border:0;border-bottom:4px solid #c2a16c;backdrop-filter:none;color:#fff;padding:20px 30px!important;box-shadow:none}.brand-title{font-size:21px;line-height:1.6;color:#fff}.brand-sub{line-height:1.9;color:var(--muted);font-size:12px}.app-header .brand-sub{color:#c3d3dc}.brand-mark{width:52px;height:52px;border-radius:50%;background:transparent;border:1px solid #c2a16c;color:#e8c993;box-shadow:none;font-family:Georgia,serif;font-size:29px}.brand-mark::after{display:none}.designer-badge{background:transparent;border:0;box-shadow:none;border-radius:0;flex-grow:0!important;padding:5px 0;font-size:12px}.designer-badge::before{display:none}.designer-badge span{animation:none;background:none;-webkit-text-fill-color:var(--muted)}.app-header .designer-badge span{-webkit-text-fill-color:#d5e0e8}.designer-badge i{color:#c6a46a;filter:none}.app-header #btnTheme,.app-header #btnSidebar{color:#fff;border-color:#4f6c7d;background:transparent}.app-header .btn-ghost{color:#fff}
+main.container-fluid{max-width:1560px;padding:0 40px 40px!important;margin:auto}#navTabs{background:var(--surface);border:1px solid var(--border);border-top:0;border-radius:0 0 14px 14px;padding:10px 16px;gap:8px!important;position:sticky;top:0;z-index:90;margin-bottom:32px!important;box-shadow:var(--shadow)}.nav-tab{border:0;background:transparent;box-shadow:none;border-radius:8px;padding:12px 18px;font-size:13px;gap:10px;min-height:47px;color:var(--muted);position:relative}.nav-tab i{font-size:17px}.nav-tab.active{color:var(--brand-1);background:var(--surface-3);border:0;box-shadow:none;font-weight:800}.nav-tab.active::after{content:'';position:absolute;bottom:-10px;right:16px;left:16px;height:3px;background:var(--brand-1);border-radius:3px 3px 0 0}.nav-tab:hover{background:var(--surface-2);color:var(--text)}main>section::before{display:block;color:var(--text);font-size:27px;font-weight:800;line-height:1.6;margin:0 0 24px}main>section[data-page="dashboard"]::before{content:'نظرة عامة على شئون التجنيد'}main>section[data-page="students"]::before{content:'سجلات الطلاب'}main>section[data-page="upload"]::before{content:'استيراد ملفات الطلاب'}main>section[data-page="reports"]::before{content:'مركز التقارير'}main>section[data-page="settings"]::before{content:'إعدادات ونسخ احتياطي'}
+.panel,.report-card{background:var(--surface);border-color:var(--border);box-shadow:var(--shadow);backdrop-filter:none;border-radius:14px}.panel-hover:hover,.report-card:hover{transform:translateY(-2px);border-color:var(--border-2);box-shadow:var(--shadow)}.stat-card{padding:22px 20px;min-height:160px;animation:none;border-top:3px solid var(--brand-1);display:grid;grid-template-columns:1fr 44px;align-content:center;column-gap:12px}.stat-card::after{display:none}.stat-icon,.report-card-icon{width:40px;height:40px;border-radius:10px;box-shadow:none;background:var(--surface-3);border:0;color:var(--brand-1);font-size:20px}.stat-card .stat-icon{grid-column:2;grid-row:1/3;margin:0!important;align-self:center}.stat-num,.report-card-value{background:none;-webkit-text-fill-color:var(--text);color:var(--text);font-size:34px;line-height:1.3;font-weight:800;letter-spacing:0;font-variant-numeric:tabular-nums}.stat-label{font-size:12px;color:var(--muted);line-height:1.7;margin-top:8px}.report-card-sub{line-height:1.8}.report-card-title{font-size:15px}.report-card-action{color:var(--brand-1)}
+.btn{border-radius:8px;min-height:42px;padding:9px 15px;font-size:13px;box-shadow:none}.btn-sm{min-height:36px;padding:6px 11px;font-size:12px}.btn-accent{background:#146b70;border:1px solid #146b70;color:#fff;box-shadow:none}.btn-accent:hover{background:#0e5357;border-color:#0e5357;color:#fff;box-shadow:none}.btn-soft{background:var(--surface);color:var(--text);border-color:var(--border-2)}.btn-soft:hover{background:var(--surface-3);color:var(--text)}.btn-ghost{color:var(--muted)}.btn:focus-visible,.nav-tab:focus-visible{outline:3px solid var(--brand-1);outline-offset:2px}.form-control,.form-select{min-height:46px;padding:11px 13px;font-size:13px;background:var(--surface-2);border-color:var(--border-2);color:var(--text);border-radius:8px}.form-control:focus,.form-select:focus{background:var(--surface);color:var(--text);border-color:var(--brand-1);box-shadow:0 0 0 3px #146b7018}.form-control::placeholder{color:var(--muted-2);opacity:1}.form-select option{background:var(--surface);color:var(--text)}.form-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.table-app{font-size:13px;line-height:1.8}.table-app thead th{background:var(--surface-2);font-size:11px;padding:15px 16px;color:var(--muted);border-color:var(--border-2);letter-spacing:0}.table-app tbody td{padding:15px 16px;border-color:var(--border)}.table-app tbody tr:hover{background:var(--surface-2)}.table-app td:first-child{font-weight:700}.scroll-x{max-width:100%;scrollbar-width:thin;scrollbar-color:var(--border-2) transparent;border-radius:13px 13px 0 0}.scroll-x table{min-width:790px}#paginationBar{border-top:1px solid var(--border);flex-wrap:wrap;gap:16px}.chip{border:1px solid var(--border);background:var(--surface-2);color:var(--text);padding:5px 10px;font-size:11px;font-weight:600;line-height:1.6;white-space:nowrap}.report-status-row{border-radius:9px;background:var(--surface-2);border-color:var(--border);padding:13px 15px;gap:16px}.report-status-row .count{background:none;-webkit-text-fill-color:var(--brand-1);font-weight:800;color:var(--brand-1)}.drop-zone{background:var(--surface-2);border:1.5px dashed var(--border-2)!important;padding:45px 24px;border-radius:12px}.drop-zone:hover{background:var(--surface-3);border-color:var(--brand-1)!important}.file-pill{background:var(--surface-2);border-color:var(--border)}.modal-content{background:var(--surface);border-color:var(--border);border-radius:16px;color:var(--text);box-shadow:var(--shadow-lg)}.modal-title{font-size:19px}.modal-header,.modal-footer,.modal-body{padding:22px 24px}.toast-app{background:var(--surface);color:var(--text);border-color:var(--border-2);box-shadow:var(--shadow-lg);backdrop-filter:none}.side-sheet{background:var(--surface);box-shadow:none;visibility:hidden}.side-sheet.open{visibility:visible;box-shadow:-20px 0 60px #00000030}.side-sheet .nav-tab{width:100%}.side-sheet .nav-tab.active::after{display:none}#splash{background:var(--ink)}.splash-mark{background:#123447;border:1px solid #c2a16c;box-shadow:none;animation:none}.splash-mark i{animation:none;color:#e8c993}::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:var(--border-2)}
+@media(min-width:992px){#chartPie{height:310px!important;max-height:310px;width:100%!important}#statsRow{--bs-gutter-x:16px;--bs-gutter-y:16px}}
+@media(max-width:1199px) and (min-width:992px){.stat-card{grid-template-columns:1fr;padding:18px}.stat-card .stat-icon{grid-column:1;grid-row:auto;margin-bottom:12px!important}.stat-label{font-size:11px}main.container-fluid{padding-inline:24px!important}}
+@media(max-width:991px){main.container-fluid{padding:0 20px 32px!important}#navTabs{position:static;flex-wrap:wrap!important;gap:5px!important;margin-bottom:24px!important;padding:9px}.nav-tab{flex:1 1 auto;justify-content:center;font-size:12px;padding:9px 12px;gap:7px}.nav-tab.active::after{display:none}.app-header{padding:16px!important}.brand-title{font-size:18px}main>section::before{font-size:23px}.stat-card{min-height:145px}section[data-page="dashboard"]>.row{--bs-gutter-y:16px}}
+@media(max-width:575px){main.container-fluid{padding:0 12px 24px!important}.app-header{padding:14px 7px!important}.app-header>.container-fluid{padding-inline:4px}.brand-mark{width:40px;height:40px;font-size:24px}.app-header .d-none.d-sm-block{display:block!important}.brand-title{font-size:13px}.app-header .brand-sub{font-size:10px;max-width:120px;line-height:1.6}.designer-badge.d-md-none{font-size:10px;padding:0;gap:4px}.designer-badge.d-md-none i{display:none}#btnTheme{min-width:32px;padding:6px!important}#btnSidebar{min-width:28px}.app-header .d-flex.gap-2{gap:6px!important}#navTabs{padding:7px;gap:3px!important;border-radius:0 0 12px 12px}.nav-tab{font-size:11px;gap:6px;padding:8px 9px;min-height:42px}.nav-tab i{font-size:15px}main>section::before{font-size:21px;margin-bottom:18px}#statsRow{--bs-gutter-x:10px;--bs-gutter-y:10px}.stat-card{padding:16px 14px;min-height:142px;grid-template-columns:1fr}.stat-card .stat-icon{grid-row:1;grid-column:1;margin-bottom:9px!important;width:30px;height:30px;font-size:16px}.stat-num{font-size:28px}.stat-label{font-size:11px;line-height:1.6;margin-top:6px}#statsRow>div:last-child:nth-child(odd){width:100%}#statsRow>div:last-child:nth-child(odd) .stat-card{grid-template-columns:1fr 44px;min-height:104px}#statsRow>div:last-child:nth-child(odd) .stat-icon{grid-column:2;grid-row:1/3;margin:0!important}.panel.p-3{padding:18px!important}.report-card{padding:17px}.report-card-title{font-size:13px}.report-card-sub{font-size:11px}.report-card-value{font-size:28px}.btn{min-height:44px;font-size:12px}.btn-sm{min-height:36px}.modal-dialog{margin:10px}.modal-header,.modal-footer,.modal-body{padding:18px}#toastBox{left:12px;right:12px}.toast-app{min-width:0;max-width:none}#paginationBar{padding:14px!important;font-size:12px}.scroll-x:after{content:'اسحب الجدول أفقيًا لعرض باقي البيانات';display:block;position:sticky;right:0;padding:9px 12px;color:var(--muted);font-size:10px;background:var(--surface-2)}.drop-zone{padding:30px 16px}}
+@media print{main.container-fluid{padding:0!important}main>section::before{color:#000}.panel,.report-card{box-shadow:none!important;background:#fff!important;color:#000!important}.stat-num,.report-card-value{-webkit-text-fill-color:#000!important}.table-app{color:#000!important}.scroll-x{overflow:visible}.scroll-x table{min-width:0}.scroll-x::after{display:none}}
+#chartPie{max-height:none!important;height:100%!important;width:100%!important}.chart-frame{width:100%;min-width:0}
+
+</style>
+<style id="interactive-summary-numbers">
+.summary-count{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border-2);background:var(--surface);color:var(--brand-1);font-weight:800;border-radius:8px;min-width:72px;min-height:40px;justify-content:center;padding:5px 12px;cursor:pointer;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}.summary-count i{font-size:11px;opacity:.75}.summary-count:hover{background:var(--surface-3);border-color:var(--brand-1)}.summary-count:focus-visible{outline:3px solid var(--brand-1);outline-offset:3px}.summary-missing{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;color:var(--warn);font-size:13px;font-weight:600}.summary-missing:first-of-type{border-top:1px solid var(--border);margin-top:12px;padding-top:16px}.identifier-value{font-family:'Cairo',system-ui,sans-serif;letter-spacing:.25px}.stat-num,.report-card-value,.count{font-variant-numeric:tabular-nums}
+</style>
+<style id="advanced-reports-style">.student-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:20px 0 6px}.advanced-card{display:flex;flex-direction:column;align-items:flex-start;position:relative;min-height:245px;text-align:right!important;color:var(--text);cursor:pointer}.advanced-card .report-card-icon{margin-bottom:12px}.advanced-card .report-card-value{font-size:34px;margin-bottom:10px}.advanced-card .report-card-sub{font-weight:400;margin-bottom:12px}.advanced-card .report-card-action{margin-top:auto}.report-number{min-width:42px;min-height:38px;border:1px solid var(--border-2);border-radius:7px;background:var(--surface);color:var(--brand-1);font-weight:800;padding:5px 10px;direction:ltr}.report-number:hover{border-color:var(--brand-1);background:var(--surface-3)}.report-number:focus-visible{outline:3px solid var(--brand-1);outline-offset:2px}.completion-track{width:70px;height:5px;background:var(--surface-3);border-radius:5px;margin-top:7px;overflow:hidden}.completion-track>span{display:block;height:100%;background:var(--brand-1)}.completion-text{font-size:12px;font-weight:700;direction:ltr;display:block}.quality-box{height:100%;border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface-2)}.quality-box .report-number{margin-inline-start:auto}.quality-box .brand-sub{flex-basis:100%;font-size:11px}.advanced-card:nth-child(n){border-top:3px solid var(--brand-1)}@media(max-width:575px){.advanced-card{min-height:252px;padding:16px 13px}.advanced-card .report-card-value{font-size:29px}.advanced-card .report-card-title{font-size:12px}.advanced-card .report-card-sub{font-size:10px}.advanced-card .report-card-action{font-size:11px}.student-toolbar{padding-top:0;gap:13px}.student-toolbar>.d-flex{width:100%}.student-toolbar .btn-accent{flex-basis:100%}.student-toolbar .btn-soft{flex:1}}
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════ Splash ═══════════ -->
+<div id="splash">
+  <div class="text-center">
+    <div class="splash-mark mx-auto mb-4"><i class="bi bi-shield-shaded"></i></div>
+    <div class="brand-title mb-1" style="font-size:20px">شئون التجنيد</div>
+    <div class="brand-sub">جامعة اللوتس — إدارة شئون الطلاب</div>
+  </div>
+</div>
+
+<div id="toastBox"></div>
+
+<!-- ═══════════ Header ═══════════ -->
+<header class="app-header py-2 px-3">
+  <div class="container-fluid d-flex align-items-center justify-content-between gap-2">
+    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+      <button class="btn btn-ghost d-lg-none p-1" id="btnSidebar" aria-label="القائمة">
+        <i class="bi bi-list" style="font-size:22px"></i>
+      </button>
+      <div class="brand-mark">L</div>
+      <div class="d-none d-sm-block">
+        <div class="brand-title">جامعة اللوتس</div>
+        <div class="brand-sub">إدارة شئون الطلاب — شئون التجنيد</div>
+      </div>
+    </div>
+
+    <!-- شعار المصمم — أعلى التطبيق -->
+    <div class="designer-badge flex-grow-1 justify-content-center mx-2 d-none d-md-flex">
+      <i class="bi bi-stars"></i>
+      <span>تصميم وتطوير <span class="full-text">المهندس </span>بولس سمير</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+      <div class="designer-badge d-md-none" title="تصميم وتطوير م. بولس سمير">
+        <i class="bi bi-stars"></i>
+        <span>بولس سمير</span>
+      </div>
+      <button class="btn btn-soft btn-sm" id="btnTheme" title="تبديل الوضع">
+        <i class="bi bi-moon-stars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ Sidebar (mobile) ═══════════ -->
+<aside class="side-sheet" id="sideSheet">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="fw-bold">القائمة</div>
+    <button class="btn btn-ghost btn-sm" id="btnCloseSide"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="d-grid gap-2" id="sideNav"></div>
+</aside>
+
+<!-- ═══════════ Main ═══════════ -->
+<main class="container-fluid py-3 px-3 px-md-4">
+  <div class="d-flex flex-wrap gap-2 mb-3" id="navTabs"></div>
+
+  <!-- ======== Dashboard ======== -->
+  <section data-page="dashboard">
+    <div class="row g-3 mb-3" id="statsRow"></div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="panel p-3 p-md-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div class="fw-bold" style="font-size:15px">توزيع الطلاب على الكليات</div>
+              <div class="brand-sub">انقر على أي شريحة لفتح القائمة</div>
+            </div>
+            <i class="bi bi-pie-chart-fill" style="font-size:22px;color:var(--brand-1)"></i>
+          </div>
+          <div class="chart-frame" style="height:330px;position:relative"><canvas id="chartPie" height="240"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="panel p-3 p-md-4">
+          <div class="fw-bold mb-1" style="font-size:15px">ملخص سريع</div>
+          <div class="brand-sub mb-3">نظرة شاملة على البيانات</div>
+          <div id="quickSummary"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== Students ======== -->
+  <section data-page="students" hidden>
+<div class="student-toolbar mb-3"><div><strong>إدارة السجلات</strong><div class="brand-sub">الطباعة والتصدير يشملان كل نتائج الفلاتر، وليس الصفحة الظاهرة فقط.</div></div><div class="d-flex gap-2 flex-wrap"><button class="btn btn-accent" id="btnAddStudent"><i class="bi bi-plus-lg"></i> إضافة طالب جديد</button><button class="btn btn-soft" id="btnPrintStudents"><i class="bi bi-printer"></i> طباعة السجلات</button><button class="btn btn-soft" id="btnExportSearch"><i class="bi bi-file-earmark-excel"></i> تصدير Excel</button></div></div>
+    <div class="panel p-3 p-md-4 mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-4">
+          <label class="form-label">بحث فوري</label>
+          <div class="position-relative">
+            <input type="text" id="searchInput" class="form-control" placeholder="الاسم / الكود / الرقم القومي / الثلاثي">
+            <span class="position-absolute kbd-hint" style="left:10px;top:10px;">/</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">الكلية</label>
+          <select id="filterCollege" class="form-select"></select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">الموقف</label>
+          <select id="filterStatus" class="form-select"></select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">ترتيب</label>
+          <select id="sortBy" class="form-select">
+            <option value="name">الاسم</option>
+            <option value="code">الكود</option>
+            <option value="nationalId">الرقم القومي</option>
+            <option value="college">الكلية</option>
+            <option value="status">الموقف</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panel p-0 overflow-hidden">
+      <div class="scroll-x">
+        <table class="table-app">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>اسم الطالب</th>
+              <th>الكود</th>
+              <th>الرقم القومي</th>
+              <th>الكلية</th>
+              <th>الثلاثي</th>
+              <th>الموقف</th>
+              <th>القرار</th>
+              <th style="width:80px" class="text-center">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="studentsBody"></tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-between align-items-center p-3" id="paginationBar"></div>
+    </div>
+  </section>
+
+  <!-- ======== Upload ======== -->
+  <section data-page="upload" hidden>
+    <div class="panel p-3 p-md-4">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+          <div class="fw-bold" style="font-size:15px">رفع ملفات Excel</div>
+          <div class="brand-sub">يمكن اختيار عدة ملفات — تحديث ذكي بدون حذف</div>
+        </div>
+        <button class="btn btn-soft" id="btnDownloadTemplate">
+          <i class="bi bi-download"></i> نموذج فارغ
+        </button>
+      </div>
+
+      <div class="drop-zone mb-3" id="dropZone">
+        <i class="bi bi-cloud-arrow-up" style="font-size:38px;color:var(--brand-1)"></i>
+        <div class="mt-2 fw-bold">اسحب الملفات هنا أو اضغط للاختيار</div>
+        <div class="brand-sub mt-1">.xlsx / .xls / .csv — حتى 10 ملفات</div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple hidden>
+      </div>
+
+      <div id="fileList" class="d-flex flex-column gap-2 mb-3"></div>
+
+      <div id="uploadPreview" hidden>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <div class="panel p-3">
+              <div class="stat-label">جديد</div>
+              <div class="stat-num" style="font-size:24px" id="pvNew">0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel p-3">
+              <div class="stat-label">تحديث</div>
+              <div class="stat-num" style="font-size:24px" id="pvUpd">0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel p-3">
+              <div class="stat-label">أخطاء</div>
+              <div class="stat-num" style="font-size:24px" id="pvErr">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-x mb-3" style="max-height:340px;">
+          <table class="table-app">
+            <thead><tr>
+              <th>#</th><th>الملف</th><th>الاسم</th><th>الكود</th><th>الرقم القومي</th>
+              <th>الكلية</th><th>الثلاثي</th><th>الموقف</th><th>القرار</th><th>الحالة</th>
+            </tr></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-accent" id="btnConfirmUpload">
+            <i class="bi bi-check2-circle"></i> تأكيد حفظ كل الملفات
+          </button>
+          <button class="btn btn-soft" id="btnCancelUpload">إلغاء</button>
+        </div>
+      </div>
+
+      <div class="progress mt-3" style="height:6px;display:none" id="progressWrap">
+        <div class="progress-bar" id="progressBar" style="width:0%;background:linear-gradient(90deg,var(--brand-1),var(--brand-2))"></div>
+      </div>
+    </div>
+
+    <div class="panel p-3 p-md-4 mt-3">
+      <div class="fw-bold mb-3" style="font-size:15px">سجل الرفع</div>
+      <div class="scroll-x">
+        <table class="table-app">
+          <thead><tr><th>التاريخ</th><th>الملف</th><th>مضاف</th><th>محدّث</th><th>أخطاء</th><th>المستخدم</th></tr></thead>
+          <tbody id="uploadLogBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== Reports — NEW DESIGN ======== -->
+  <section data-page="reports" hidden>
+ <div class="panel p-3 p-md-4 mb-3"><div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3"><div><h5 class="fw-bold mb-1">تحليل السجلات ومتابعة النواقص</h5><div class="brand-sub">التقارير مبنية على السجلات المحمّلة، وليست حكمًا على صحة المستندات أو الموقف القانوني.</div></div><div class="d-flex gap-2"><button id="btnReportExport" class="btn btn-soft"><i class="bi bi-file-earmark-excel"></i> تصدير النتائج</button><button id="btnReportPrint" class="btn btn-soft"><i class="bi bi-printer"></i> طباعة النتائج</button></div></div>
+ <div class="row g-3"><div class="col-md-4"><label class="form-label" for="reportCollege">الكلية</label><select class="form-select" id="reportCollege"></select></div><div class="col-md-4"><label class="form-label" for="reportStatusFilter">الموقف</label><select class="form-select" id="reportStatusFilter"></select></div><div class="col-md-4"><label class="form-label" for="reportCompleteness">اكتمال الحقول</label><select class="form-select" id="reportCompleteness"><option value="">الكل</option><option value="complete">مكتمل الحقول الأساسية</option><option value="missing">ينقصه حقل أساسي</option></select></div></div><div class="brand-sub mt-3">الحقول الأساسية: الاسم، الكود، رقم قومي من 14 رقمًا، الكلية، الثلاثي، الموقف، القرار. القيم المدخلة لا تثبت صحة المستند. اضغط أي بطاقة أو رقم لفتح السجلات.</div></div>
+ <div id="advancedReportCards" class="row g-3 mb-3"></div>
+ <div class="row g-3"><div class="col-lg-7"><div class="panel p-3 p-md-4 h-100"><h6 class="fw-bold mb-3">مقارنة اكتمال البيانات حسب الكلية</h6><div class="scroll-x"><table class="table-app"><thead><tr><th>الكلية</th><th>إجمالي</th><th>مكتمل</th><th>اكتمال %</th><th>ينقصه ثلاثي</th><th>ينقصه قرار</th></tr></thead><tbody id="reportCollegeMatrix"></tbody></table></div></div></div><div class="col-lg-5"><div class="panel p-3 p-md-4 h-100"><h6 class="fw-bold mb-3">توزيع المواقف داخل النتائج</h6><div id="reportStatusBreakdown"></div></div></div></div>
+ <div class="panel p-3 p-md-4 mt-3"><h6 class="fw-bold mb-2">مراجعة جودة البيانات</h6><div class="brand-sub mb-3">التكرار يُحسب بعد توحيد شكل الأرقام والمسافات الخارجية فقط، داخل النتائج المصفّاة. القائمة تعرض السجلات المتأثرة، ولا تدمج أو تحذف أي سجل.</div><div id="reportQuality" class="row g-3"></div></div>
+</section>
+
+  <!-- ======== Settings ======== -->
+  <section data-page="settings" hidden>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel p-3 p-md-4">
+          <div class="fw-bold mb-1" style="font-size:15px">نسخة احتياطية</div>
+          <div class="brand-sub mb-3">تصدير كل البيانات (JSON) واستعادتها</div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-soft" id="btnBackup">
+              <i class="bi bi-download"></i> تصدير Backup
+            </button>
+            <button class="btn btn-soft" id="btnRestoreBtn">
+              <i class="bi bi-upload"></i> استعادة
+            </button>
+            <input type="file" id="restoreFile" accept="application/json" hidden>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel p-3 p-md-4">
+          <div class="fw-bold mb-1" style="font-size:15px">حذف جماعي</div>
+          <div class="brand-sub mb-3">سيتم حذف جميع بيانات الطلاب نهائيًا</div>
+          <button class="btn btn-soft text-danger" id="btnWipe">
+            <i class="bi bi-trash"></i> حذف كل الطلاب
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═══════════ Footer ═══════════ -->
+<footer class="text-center py-4 mt-4" style="border-top:1px solid var(--border)">
+  <div class="brand-sub mb-2">نظام شئون التجنيد — جامعة اللوتس — إدارة شئون الطلاب</div>
+  <div class="designer-badge">
+    <i class="bi bi-stars"></i>
+    <span>تصميم وتطوير المهندس بولس سمير</span>
+  </div>
+</footer>
+
+<!-- ═══════════ Modals ═══════════ -->
+<div class="modal fade" id="modalList" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalListTitle">قائمة الطلاب</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3">
+          <div class="col-md-6"><input class="form-control" id="modalSearch" placeholder="بحث داخل القائمة..."></div>
+          <div class="col-md-6 d-flex gap-2 justify-content-md-end">
+            <button class="btn btn-soft btn-sm" onclick="App.exportModalList()">
+              <i class="bi bi-file-earmark-excel"></i> Excel
+            </button>
+            <button class="btn btn-soft btn-sm" onclick="App.printModalList()">
+              <i class="bi bi-printer"></i> طباعة
+            </button>
+          </div>
+        </div>
+        <div class="scroll-x">
+          <table class="table-app">
+            <thead><tr>
+              <th>الاسم</th><th>الكود</th><th>الرقم القومي</th><th>الكلية</th><th>الثلاثي</th><th>الموقف</th><th>القرار</th>
+            </tr></thead>
+            <tbody id="modalBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalStudent" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalStudentTitle">بيانات الطالب</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalStudentBody"></div>
+      <div class="modal-footer" id="modalStudentFooter"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="module">
+await new Promise(res => {
+  if (window.__db) res(); else window.addEventListener('firebase-ready', res, { once: true });
+});
+
+const {
+  collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc,
+  writeBatch, serverTimestamp, addDoc
+} = window.__fb;
+const db = window.__db;
+
+/* ═══════════ الحالة ═══════════ */
+const State = {
+  students: [], filtered: [], page: 1, pageSize: 15,
+  sortBy: 'name', search: '', filterStatus: '', filterCollege: '',
+  statusOptions: [], collegeOptions: [], chart: null,
+};
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+/* ═══════════ أدوات ═══════════ */
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[m]));
+
+const toast = (msg, type='info', ms=3500) => {
+  const icons = { info:'bi-info-circle', success:'bi-check-circle', error:'bi-x-circle', warn:'bi-exclamation-triangle' };
+  const colors = { success:'var(--success)', error:'var(--danger)', warn:'var(--warn)', info:'var(--brand-1)' };
+  const el = document.createElement('div');
+  el.className = 'toast-app';
+  el.innerHTML = `<i class="bi ${icons[type]||icons.info}" style="font-size:20px;color:${colors[type]||colors.info};flex-shrink:0"></i>
+    <div style="flex:1;font-size:13.5px;white-space:pre-line;line-height:1.5">${esc(msg)}</div>`;
+  $('#toastBox').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(()=>el.remove(), 300); }, ms);
+};
+
+const isEmpty = (v) => v === undefined || v === null || String(v).trim() === '';
+
+// Presentation strings only: keep separators and leading zeros in logical order.
+const asciiDigits = value => String(value ?? '').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+const identifierHTML = value => `<bdi dir="ltr" class="identifier-value" style="direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums;white-space:nowrap">${esc(asciiDigits(value || '—').replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g,''))}</bdi>`;
+// Convert dynamically rendered text, without touching attributes, stored data or scripts.
+function useLatinDisplayDigits(root){
+  if(root.nodeType===Node.TEXT_NODE){
+    if(!root.parentElement?.closest('script,style,textarea,input,[contenteditable]')&&/[٠-٩۰-۹]/.test(root.nodeValue))root.nodeValue=asciiDigits(root.nodeValue);
+    return;
+  }
+  if(root.nodeType!==Node.ELEMENT_NODE||root.matches('script,style,textarea,input,[contenteditable]'))return;
+  const walk=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while(node=walk.nextNode())useLatinDisplayDigits(node);
+}
+useLatinDisplayDigits(document.body);
+new MutationObserver(changes=>{for(const change of changes){if(change.type==='characterData')useLatinDisplayDigits(change.target);else for(const node of change.addedNodes)useLatinDisplayDigits(node);}}).observe(document.body,{subtree:true,childList:true,characterData:true});
+
+
+// Display/matching aliases only. Never rewrites stored records or backup values.
+function canonicalStatus(value){
+  const text=String(value ?? '').trim().replace(/\s+/g,' ');
+  const key=text.replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي');
+  if(key==='غير مستوفي الاوراق')return 'غير مستوفي الأوراق';
+  if(key==='معاف نهائي')return 'معاف نهائي';
+  return text;
+}
+
+
+const normalizeNational = (v) => {
+  if (v === null || v === undefined) return '';
+  return String(v)
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/\s+/g,'').replace(/[^\d]/g,'');
+};
+
+const uid = () => 'x' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+/* ═══════════ Splash ═══════════ */
+setTimeout(() => $('#splash').classList.add('hide'), 700);
+
+/* ═══════════ Theme ═══════════ */
+(function initTheme(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-bs-theme', saved);
+  updateThemeIcon(saved);
+  $('#btnTheme').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-bs-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeIcon(next);
+    window.App?.renderDashboard();
+  });
+  function updateThemeIcon(mode){
+    $('#btnTheme').innerHTML = mode === 'dark' ? '<i class="bi bi-moon-stars"></i>' : '<i class="bi bi-sun"></i>';
+  }
+})();
+
+/* ═══════════ Nav ═══════════ */
+const PAGES = [
+  { id:'dashboard', label:'لوحة المؤشرات', icon:'bi-speedometer2' },
+  { id:'students',  label:'الطلاب',         icon:'bi-people' },
+  { id:'upload',    label:'رفع Excel',      icon:'bi-cloud-arrow-up' },
+  { id:'reports',   label:'التقارير',       icon:'bi-bar-chart' },
+  { id:'settings',  label:'الإعدادات',      icon:'bi-gear' },
+];
+
+function buildNav(){
+  $('#navTabs').innerHTML = PAGES.map(p =>
+    `<button class="nav-tab" data-page="${p.id}"><i class="bi ${p.icon}"></i>${p.label}</button>`
+  ).join('');
+  $('#sideNav').innerHTML = PAGES.map(p =>
+    `<button class="nav-tab text-start" data-page="${p.id}"><i class="bi ${p.icon} me-2"></i>${p.label}</button>`
+  ).join('');
+  $$('#navTabs [data-page], #sideNav [data-page]').forEach(b =>
+    b.addEventListener('click', () => { go(b.dataset.page); closeSide(); }));
+}
+
+function go(pageId){
+  $$('main > section[data-page]').forEach(s => s.hidden = s.dataset.page !== pageId);
+  $$('#navTabs [data-page], #sideNav [data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
+  if (pageId === 'dashboard') App.renderDashboard();
+  if (pageId === 'students')  App.renderStudents();
+  if (pageId === 'reports')   App.renderReports();
+  if (pageId === 'upload')    App.loadUploadLog();
+}
+
+$('#btnSidebar').addEventListener('click', () => $('#sideSheet').classList.add('open'));
+$('#btnCloseSide').addEventListener('click', closeSide);
+function closeSide(){ $('#sideSheet').classList.remove('open'); }
+
+/* ═══════════ تحميل البيانات ═══════════ */
+async function loadStudents(){
+  try {
+    const snap = await getDocs(collection(db, 'students'));
+    State.students = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    recomputeOptions();
+  } catch (e) {
+    console.error(e);
+    toast('تعذر تحميل البيانات: ' + e.message, 'error');
+  }
+}
+
+function recomputeOptions(){
+  const statusSet = new Set();
+  const collegeSet = new Set();
+  State.students.forEach(s => {
+    if (!isEmpty(s.status)) statusSet.add(canonicalStatus(s.status));
+    if (!isEmpty(s.college)) collegeSet.add(String(s.college).trim());
+  });
+  State.statusOptions = Array.from(statusSet).sort();
+  State.collegeOptions = Array.from(collegeSet).sort();
+
+  $('#filterStatus').innerHTML = `<option value="">كل المواقف</option>` +
+    State.statusOptions.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  $('#filterCollege').innerHTML = `<option value="">كل الكليات</option>` +
+    State.collegeOptions.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  if(!State.statusOptions.includes(State.filterStatus))State.filterStatus='';
+  if(!State.collegeOptions.includes(State.filterCollege))State.filterCollege='';
+  $('#filterStatus').value=State.filterStatus;
+  $('#filterCollege').value=State.filterCollege;
+}
+
+/* ═══════════ إحصاءات ═══════════ */
+function computeStats(){
+  const total = State.students.length;
+  const byStatus = {};
+  const byCollege = {};
+  State.statusOptions.forEach(v => byStatus[v] = 0);
+  State.collegeOptions.forEach(v => byCollege[v] = 0);
+
+  let noTri = 0, noDec = 0;
+  State.students.forEach(s => {
+    if (!isEmpty(s.status)) { const k = canonicalStatus(s.status); byStatus[k] = (byStatus[k]||0)+1; }
+    if (!isEmpty(s.college)) { const k = String(s.college).trim(); byCollege[k] = (byCollege[k]||0)+1; }
+    if (isEmpty(s.tri)) noTri++;
+    if (isEmpty(s.decision)) noDec++;
+  });
+
+  const deferred = sumStatus(byStatus, ['مؤجل','مؤجلة','تأجيل','تجنيدي']);
+  const finished = sumStatus(byStatus, ['منتهي','معاف','إعفاء','اعفاء']);
+  const unknown = Math.max(0, total - deferred - finished);
+
+  return { total, byStatus, byCollege, deferred, finished, unknown, noTri, noDec };
+}
+function sumStatus(map, keys){
+  let n = 0;
+  Object.entries(map).forEach(([k,v]) => { if (keys.some(x => k.includes(x))) n += v; });
+  return n;
+}
+
+function renderStatsCards(stats){
+  const cards = [
+    { key:'total',    label:'إجمالي الطلاب',        icon:'bi-people',               val: stats.total },
+    { key:'deferred', label:'مؤجلون تجنيديًا',       icon:'bi-hourglass-split',       val: stats.deferred },
+    { key:'finished', label:'منتهي الموقف / معافون',  icon:'bi-shield-check',          val: stats.finished },
+    { key:'unknown',  label:'لم يُحدد موقفهم',       icon:'bi-question-circle',       val: stats.unknown },
+    { key:'missing',  label:'ناقصهم بيانات',        icon:'bi-exclamation-diamond',   val: State.students.filter(s => isEmpty(s.tri) || isEmpty(s.decision)).length },
+  ];
+  $('#statsRow').innerHTML = cards.map((c,i) => `
+    <div class="col-6 col-md-4 col-xl" style="animation-delay:${i*50}ms">
+      <div class="panel panel-hover stat-card" data-stat="${c.key}">
+        <div class="stat-icon mb-3"><i class="bi ${c.icon}"></i></div>
+        <div class="stat-num" data-count="${c.val}">0</div>
+        <div class="stat-label">${c.label}</div>
+      </div>
+    </div>
+  `).join('');
+  $$('#statsRow .stat-card').forEach(el => el.addEventListener('click', () => App.openStatModal(el.dataset.stat, stats)));
+  $$('#statsRow .stat-num[data-count]').forEach(el => animateCount(el, parseInt(el.dataset.count,10)||0));
+}
+
+function animateCount(el, target){
+  const dur = 700, start = performance.now();
+  const step = (t) => {
+    const p = Math.min(1, (t - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(eased * target).toLocaleString('en-US');
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function renderQuickSummary(stats){
+  const countButton=(kind,count)=>`<button type="button" class="summary-count" data-summary-kind="${esc(kind)}" aria-label="عرض تفاصيل ${esc(kind.startsWith('status:')?kind.slice(7):kind==='missing-noTri'?'بدون رقم ثلاثي':'بدون قرار تأجيل')}" title="عرض التفاصيل">${count.toLocaleString('en-US')}<i class="bi bi-arrow-up-left" aria-hidden="true"></i></button>`;
+  const rows=Object.entries(stats.byStatus).map(([status,count])=>`<div class="report-status-row"><div>${esc(status)}</div>${countButton('status:'+status,count)}</div>`).join('')||`<div class="text-center py-4" style="color:var(--muted);font-size:13px">لا توجد بيانات بعد</div>`;
+  $('#quickSummary').innerHTML=rows+`<div class="summary-missing"><div>ناقصهم ثلاثي</div>${countButton('missing-noTri',stats.noTri)}</div><div class="summary-missing"><div>ناقصهم قرار تأجيل</div>${countButton('missing-noDec',stats.noDec)}</div>`;
+  $$('#quickSummary [data-summary-kind]').forEach(button=>button.addEventListener('click',()=>App.openStatModal(button.dataset.summaryKind,computeStats())));
+}
+
+function renderPieChart(stats){
+  const ctx = $('#chartPie'); if (!ctx) return;
+  const labels = Object.keys(stats.byCollege);
+  const data = Object.values(stats.byCollege);
+  if (State.chart) State.chart.destroy();
+  if (!data.length) return;
+  State.chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{
+      data,
+      backgroundColor: ['#5b8cff','#9d6bff','#ffc857','#34d399','#f87171','#38bdf8','#fb923c','#c084fc','#4ade80','#f472b6'],
+      borderWidth: 2, borderColor: 'rgba(0,0,0,0)',
+      hoverOffset: 8,
+    }]},
+    options: {
+      maintainAspectRatio: false,
+      onClick: (e, els) => {
+        if (!els.length) return;
+        App.openStatModal('college:' + labels[els[0].index], stats);
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: getComputedStyle(document.documentElement).getPropertyValue('--text').trim(),
+            font: { family: 'Cairo', size: 12 },
+            padding: 12, boxWidth: 10, boxHeight: 10, usePointStyle: true,
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15,23,48,.95)',
+          borderColor: 'rgba(255,255,255,.15)',
+          borderWidth: 1,
+          titleFont: { family: 'Cairo' },
+          bodyFont: { family: 'Cairo' },
+          padding: 10, cornerRadius: 8,
+        }
+      },
+      cutout: '68%',
+      animation: false
+    }
+  });
+}
+
+/* ═══════════ جدول الطلاب ═══════════ */
+function applyFilter(){
+  const q = asciiDigits(State.search).trim().toLowerCase();
+  const fs = State.filterStatus;
+  const fc = State.filterCollege;
+  let arr = State.students.slice();
+  if (q) arr = arr.filter(s =>
+    (s.name||'').toLowerCase().includes(q) ||
+    asciiDigits(s.code||'').toLowerCase().includes(q) ||
+    asciiDigits(s.nationalId||'').includes(q) ||
+    asciiDigits(s.tri||'').includes(q) ||
+    (s.college||'').toLowerCase().includes(q));
+  if (fs) arr = arr.filter(s => canonicalStatus(s.status) === canonicalStatus(fs));
+  if (fc) arr = arr.filter(s => String(s.college||'').trim() === fc);
+  const key = State.sortBy;
+  arr.sort((a,b) => String(a[key]||'').localeCompare(String(b[key]||''), 'ar'));
+  State.filtered = arr; State.page = 1;
+}
+
+function renderStudents(){ applyFilter(); renderStudentsTable(); }
+
+function renderStudentsTable(){
+  const { filtered, page, pageSize } = State;
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  const p = Math.min(page, pages);
+  const slice = filtered.slice((p-1)*pageSize, p*pageSize);
+
+  const body = $('#studentsBody');
+  if (!slice.length) {
+    body.innerHTML = `<tr><td colspan="9" class="text-center py-5" style="color:var(--muted)">لا توجد نتائج</td></tr>`;
+  } else {
+    body.innerHTML = slice.map((s,i) => `
+      <tr data-id="${s.id}">
+        <td style="color:var(--muted)">${(p-1)*pageSize+i+1}</td>
+        <td class="fw-bold">${esc(s.name||'—')}</td>
+        <td>${identifierHTML(s.code)}</td>
+        <td style="font-family:'Courier New',monospace;font-size:12.5px">${identifierHTML(s.nationalId)}</td>
+        <td>${esc(s.college||'—')}</td>
+        <td>${identifierHTML(s.tri)}</td>
+        <td>${s.status ? `<span class="chip">${esc(canonicalStatus(s.status))}</span>` : '—'}</td>
+        <td>${identifierHTML(s.decision)}</td>
+        <td class="text-center">
+          <button class="btn btn-ghost btn-sm p-1" data-act="view" title="عرض"><i class="bi bi-eye"></i></button>
+          <button class="btn btn-ghost btn-sm p-1" data-act="edit" title="تعديل"><i class="bi bi-pencil"></i></button>
+        </td>
+      </tr>`).join('');
+    body.querySelectorAll('tr[data-id]').forEach(tr => {
+      tr.addEventListener('click', (e) => {
+        const id = tr.dataset.id;
+        const act = e.target.closest('[data-act]')?.dataset.act || 'view';
+        const s = State.students.find(x => x.id === id);
+        if (!s) return;
+        if (act === 'edit') App.openStudentForm(s); else App.openStudentView(s);
+      });
+    });
+  }
+
+  const btn = (label, target, disabled, active) =>
+    `<button class="btn btn-soft btn-sm ${active?'fw-bold':''}" ${disabled?'disabled':''} data-pg="${target}" style="min-width:36px">${label}</button>`;
+  let html = `<div style="color:var(--muted);font-size:12.5px">إجمالي: <b style="color:var(--text)">${total.toLocaleString('en-US')}</b></div><div class="d-flex gap-1">`;
+  html += btn('<i class="bi bi-chevron-right"></i>', Math.max(1, p-1), p === 1);
+  for (let i = Math.max(1, p-2); i <= Math.min(pages, p+2); i++) html += btn(i, i, false, i === p);
+  html += btn('<i class="bi bi-chevron-left"></i>', Math.min(pages, p+1), p === pages);
+  html += `</div>`;
+  $('#paginationBar').innerHTML = html;
+  $('#paginationBar').querySelectorAll('[data-pg]').forEach(b =>
+    b.addEventListener('click', () => { State.page = parseInt(b.dataset.pg,10); renderStudentsTable(); }));
+}
+
+/* ═══════════ Modal طالب ═══════════ */
+const modalStudent = new bootstrap.Modal('#modalStudent');
+const modalList = new bootstrap.Modal('#modalList');
+
+function openStudentView(s){
+  $('#modalStudentTitle').textContent = 'بيانات الطالب';
+  $('#modalStudentBody').innerHTML = `
+    <div class="row g-3">
+      <div class="col-md-6"><div class="brand-sub">الاسم</div><div class="fw-bold" style="font-size:15px">${esc(s.name||'—')}</div></div>
+      <div class="col-md-6"><div class="brand-sub">كود الطالب</div><div class="fw-bold">${identifierHTML(s.code)}</div></div>
+      <div class="col-md-6"><div class="brand-sub">الرقم القومي</div><div style="font-family:'Courier New',monospace;font-weight:700">${identifierHTML(s.nationalId)}</div></div>
+      <div class="col-md-6"><div class="brand-sub">الكلية</div><div class="fw-bold">${esc(s.college||'—')}</div></div>
+      <div class="col-md-6"><div class="brand-sub">الرقم الثلاثي العسكري</div><div class="fw-bold">${identifierHTML(s.tri)}</div></div>
+      <div class="col-md-6"><div class="brand-sub">الموقف من التأجيل</div><div class="fw-bold">${esc(canonicalStatus(s.status)||'—')}</div></div>
+      <div class="col-md-6"><div class="brand-sub">رقم قرار التأجيل</div><div class="fw-bold">${identifierHTML(s.decision)}</div></div>
+    </div>`;
+  $('#modalStudentFooter').innerHTML = `
+    <button class="btn btn-soft" data-bs-dismiss="modal">إغلاق</button>
+    <button class="btn btn-soft" onclick="App.printStudent('${s.id}')"><i class="bi bi-printer"></i> طباعة</button>
+    <button class="btn btn-accent" onclick="App.openStudentForm(App.findById('${s.id}'))"><i class="bi bi-pencil"></i> تعديل</button>`;
+  modalStudent.show();
+}
+
+function openStudentForm(existing){
+  const isNew = !existing;
+  const s = existing || {};
+  $('#modalStudentTitle').textContent = isNew ? 'طالب جديد' : 'تعديل بيانات الطالب';
+  $('#modalStudentBody').innerHTML = `
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">اسم الطالب *</label>
+        <input class="form-control" id="fName" value="${esc(s.name||'')}"></div>
+      <div class="col-md-6"><label class="form-label">كود الطالب</label>
+        <input class="form-control" id="fCode" dir="ltr" value="${esc(asciiDigits(s.code||''))}"></div>
+      <div class="col-md-6"><label class="form-label">الرقم القومي (14 رقم)</label>
+        <input class="form-control" id="fNational" dir="ltr" value="${esc(asciiDigits(s.nationalId||''))}" maxlength="20"></div>
+      <div class="col-md-6"><label class="form-label">الكلية</label>
+        <input class="form-control" id="fCollege" value="${esc(s.college||'')}" list="collegeOptions">
+        <datalist id="collegeOptions">${State.collegeOptions.map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
+      <div class="col-md-6"><label class="form-label">الرقم الثلاثي العسكري</label>
+        <input class="form-control" id="fTri" dir="ltr" style="direction:ltr;unicode-bidi:isolate;text-align:left" value="${esc(asciiDigits(s.tri||''))}"></div>
+      <div class="col-md-6"><label class="form-label">الموقف من التأجيل</label>
+        <input class="form-control" id="fStatus" value="${esc(s.status||'')}" list="statusOptions">
+        <datalist id="statusOptions">${State.statusOptions.map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
+      <div class="col-md-6"><label class="form-label">رقم قرار التأجيل</label>
+        <input class="form-control" id="fDecision" dir="ltr" style="direction:ltr;unicode-bidi:isolate;text-align:left" value="${esc(asciiDigits(s.decision||''))}"></div>
+    </div>`;
+  $('#modalStudentFooter').innerHTML = `
+    <button class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+    ${!isNew ? `<button class="btn btn-soft text-danger" onclick="App.deleteStudent('${s.id}')"><i class="bi bi-trash"></i> حذف</button>` : ''}
+    <button class="btn btn-accent" id="btnSaveStudent"><i class="bi bi-check2"></i> حفظ</button>`;
+  modalStudent.show();
+
+  ['fTri','fDecision','fCode','fNational'].forEach(id=>document.getElementById(id).addEventListener('input',e=>{const input=e.target,start=input.selectionStart,end=input.selectionEnd;input.value=asciiDigits(input.value);input.setSelectionRange(start,end);}));
+  $('#btnSaveStudent').addEventListener('click', async () => {
+    const saveButton=$('#btnSaveStudent');if(saveButton.disabled)return;
+    const data = {
+      name: $('#fName').value.trim(),
+      code: !isNew && $('#fCode').value === asciiDigits(s.code||'') ? (s.code||'') : $('#fCode').value.trim(),
+      nationalId: normalizeNational($('#fNational').value),
+      college: $('#fCollege').value.trim(),
+      tri: !isNew && $('#fTri').value === asciiDigits(s.tri||'') ? (s.tri||'') : $('#fTri').value.trim(),
+      status: $('#fStatus').value.trim(),
+      decision: !isNew && $('#fDecision').value === asciiDigits(s.decision||'') ? (s.decision||'') : $('#fDecision').value.trim(),
+      updatedAt: serverTimestamp(),
+    };
+    if (!data.name) { toast('الاسم مطلوب', 'warn'); return; }
+    if (data.nationalId && data.nationalId.length !== 14) { toast('الرقم القومي يجب أن يكون 14 رقمًا', 'warn'); return; }
+    saveButton.disabled=true;saveButton.textContent='جاري تأكيد الحفظ في Firestore...';
+    try {
+      if (isNew) { data.createdAt = serverTimestamp(); await addDoc(collection(db,'students'), data); toast('تمت الإضافة', 'success'); }
+      else { await updateDoc(doc(db,'students', s.id), data); toast('تم التحديث', 'success'); }
+      modalStudent.hide();
+      await loadStudents();
+      App.renderDashboard(); App.renderStudents();
+    } catch (e) { toast('لم يتم تأكيد الحفظ في Firestore: ' + (e.code||'') + ' ' + e.message, 'error', 7000); }
+    finally{saveButton.disabled=false;saveButton.innerHTML='<i class="bi bi-check2"></i> حفظ';}
+  });
+}
+
+async function deleteStudent(id){
+  if (!confirm('هل أنت متأكد من حذف هذا الطالب؟')) return;
+  try {
+    await deleteDoc(doc(db, 'students', id));
+    toast('تم الحذف', 'success');
+    modalStudent.hide();
+    await loadStudents();
+    App.renderDashboard(); App.renderStudents();
+  } catch (e) { toast('تعذر الحذف: ' + e.message, 'error'); }
+}
+
+/* ═══════════ Modal قائمة ═══════════ */
+let modalListData = [];
+function openStatModal(kind, stats){
+  let title = '', list = [];
+  if (kind === 'total') { title = 'إجمالي الطلاب'; list = State.students; }
+  else if (kind === 'deferred') { title = 'الطلاب المؤجلون تجنيديًا';
+    list = State.students.filter(s => ['مؤجل','مؤجلة','تأجيل','تجنيدي'].some(x => String(s.status||'').includes(x))); }
+  else if (kind === 'finished') { title = 'منتهي الموقف / معافون';
+    list = State.students.filter(s => ['منتهي','معاف','إعفاء','اعفاء'].some(x => String(s.status||'').includes(x))); }
+  else if (kind === 'unknown') { title = 'لم يُحدد موقفهم'; list = State.students.filter(s => !['مؤجل','مؤجلة','تأجيل','تجنيدي','منتهي','معاف','إعفاء','اعفاء'].some(x => canonicalStatus(s.status).includes(x))); }
+  else if (kind === 'missing') { title = 'ناقصهم بيانات'; list = State.students.filter(s => isEmpty(s.tri) || isEmpty(s.decision)); }
+  else if (kind.startsWith('status:')) { const v = kind.slice(7); title = 'الموقف: ' + v;
+    list = State.students.filter(s => canonicalStatus(s.status) === canonicalStatus(v)); }
+  else if (kind.startsWith('college:')) { const v = kind.slice(8); title = 'الكلية: ' + v;
+    list = State.students.filter(s => String(s.college||'').trim() === v); }
+  modalListData = list;
+  $('#modalListTitle').textContent = title + ` (${list.length.toLocaleString('en-US')})`;
+  renderModalList(list);
+  modalList.show();
+  $('#modalSearch').oninput = (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    const f = !q ? list : list.filter(s =>
+      (s.name||'').toLowerCase().includes(q) || (s.code||'').includes(q) || asciiDigits(s.nationalId||'').includes(q));
+    renderModalList(f);
+  };
+}
+function renderModalList(list){
+  const body = $('#modalBody');
+  if (!list.length) { body.innerHTML = `<tr><td colspan="7" class="text-center py-4" style="color:var(--muted)">لا توجد بيانات</td></tr>`; return; }
+  body.innerHTML = list.map(s => `
+    <tr data-id="${s.id}">
+      <td class="fw-bold">${esc(s.name||'—')}</td>
+      <td>${identifierHTML(s.code)}</td>
+      <td style="font-family:'Courier New',monospace;font-size:12.5px">${identifierHTML(s.nationalId)}</td>
+      <td>${esc(s.college||'—')}</td>
+      <td>${identifierHTML(s.tri)}</td>
+      <td>${esc(canonicalStatus(s.status)||'—')}</td>
+      <td>${identifierHTML(s.decision)}</td>
+    </tr>`).join('');
+  body.querySelectorAll('tr[data-id]').forEach(tr =>
+    tr.addEventListener('click', () => {
+      const s = State.students.find(x => x.id === tr.dataset.id);
+      if (s) { modalList.hide(); App.openStudentView(s); }
+    }));
+}
+
+/* ═══════════ Reports ═══════════ */
+let currentReportRows=[];
+const reportState={college:'',status:'',completion:''};
+function missingCore(s){return isEmpty(s.name)||isEmpty(s.code)||normalizeNational(s.nationalId).length!==14||isEmpty(s.college)||isEmpty(s.tri)||isEmpty(s.status)||isEmpty(s.decision);}
+function duplicates(rows,key){const groups=new Map();for(const s of rows){const value=asciiDigits(s[key]||'').trim();if(!value)continue;const group=groups.get(value)||[];group.push(s);groups.set(value,group);}return rows.filter(s=>{const value=asciiDigits(s[key]||'').trim();return value&&(groups.get(value)?.length||0)>1;});}
+function openDetailList(title,list){modalListData=list.slice();$('#modalListTitle').textContent=asciiDigits(title)+' ('+list.length.toLocaleString('en-US')+')';renderModalList(list);$('#modalSearch').value='';$('#modalSearch').oninput=e=>{const q=asciiDigits(e.target.value).trim().toLowerCase();const result=!q?list:list.filter(s=>[s.name,s.code,s.nationalId,s.college,s.tri,s.decision,canonicalStatus(s.status)].some(v=>asciiDigits(v).toLowerCase().includes(q)));modalListData=result;renderModalList(result);};modalList.show();}
+function exportRows(list,name){toExcel(list.map(s=>({'اسم الطالب':s.name||'','كود الطالب':asciiDigits(s.code||''),'الرقم القومي':asciiDigits(s.nationalId||''),'الكلية':s.college||'','الرقم الثلاثي':asciiDigits(s.tri||''),'الموقف':canonicalStatus(s.status),'رقم القرار':asciiDigits(s.decision||'')})),name);}
+function printRows(title,list){if(!list.length){toast('لا توجد سجلات للطباعة','warn');return;}const w=window.open('','_blank','width=1100,height=800');if(!w){toast('اسمح بالنوافذ المنبثقة للطباعة','warn');return;}const rows=list.map((s,i)=>`<tr><td>${i+1}</td><td>${esc(asciiDigits(s.name||'—'))}</td><td>${identifierHTML(s.code)}</td><td>${identifierHTML(s.nationalId)}</td><td>${esc(asciiDigits(s.college||'—'))}</td><td>${identifierHTML(s.tri)}</td><td>${esc(canonicalStatus(s.status)||'—')}</td><td>${identifierHTML(s.decision)}</td></tr>`).join('');w.document.write(`<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${esc(title)}</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial,sans-serif;color:#152b42}h1{text-align:center;font-size:20px}p{text-align:center}table{border-collapse:collapse;width:100%;font-size:10px}th,td{border:1px solid #a6b3be;padding:7px;text-align:right;overflow-wrap:anywhere}th{background:#edf2f5}tr{break-inside:avoid}thead{display:table-header-group}bdi{font-family:Arial,sans-serif}.meta{color:#536a7a;font-size:11px}.credit{text-align:center;font-size:10px;margin-top:16px}</style></head><body><h1>جامعة اللوتس، شئون التجنيد</h1><p>${esc(asciiDigits(title))}</p><p class="meta">عدد السجلات: ${list.length} | ${new Date().toLocaleString('ar-EG-u-nu-latn')}</p><table><thead><tr><th>#</th><th>الاسم</th><th>الكود</th><th>الرقم القومي</th><th>الكلية</th><th>الثلاثي</th><th>الموقف</th><th>القرار</th></tr></thead><tbody>${rows}</tbody></table><div class="credit">تصميم وتطوير المهندس بولس سمير</div><script>window.onload=()=>window.print();<\/script></body></html>`);w.document.close();}
+function renderReports(){
+ const option=(v)=>`<option value="${esc(v)}">${esc(v)}</option>`;
+ $('#reportCollege').innerHTML='<option value="">كل الكليات</option>'+State.collegeOptions.map(option).join('');
+ $('#reportStatusFilter').innerHTML='<option value="">كل المواقف</option>'+State.statusOptions.map(option).join('');
+ if(!State.collegeOptions.includes(reportState.college))reportState.college='';if(!State.statusOptions.includes(reportState.status))reportState.status='';
+ $('#reportCollege').value=reportState.college;$('#reportStatusFilter').value=reportState.status;$('#reportCompleteness').value=reportState.completion;
+ currentReportRows=State.students.filter(s=>(!reportState.college||String(s.college||'').trim()===reportState.college)&&(!reportState.status||canonicalStatus(s.status)===reportState.status)&&(!reportState.completion||(reportState.completion==='complete'?!missingCore(s):missingCore(s))));
+ const rows=currentReportRows,complete=rows.filter(s=>!missingCore(s)),incomplete=rows.filter(missingCore),noTri=rows.filter(s=>isEmpty(s.tri)),noDec=rows.filter(s=>isEmpty(s.decision)),both=rows.filter(s=>isEmpty(s.tri)&&isEmpty(s.decision)),unspecified=rows.filter(s=>isEmpty(s.status)||canonicalStatus(s.status)==='غير محدد');
+ const cards=[['إجمالي النتائج','كل السجلات ضمن الفلاتر','bi-people',rows],['مكتمل الحقول','اكتمال إدخال، لا تحقق مستندات','bi-check2-circle',complete],['يحتاج استكمالًا','ينقصه حقل أساسي واحد على الأقل','bi-list-check',incomplete],['بدون رقم ثلاثي','الحقل فارغ في السجل','bi-123',noTri],['بدون قرار','حقل رقم القرار فارغ','bi-file-earmark-x',noDec],['ينقصه الثلاثي والقرار','السجل نفسه يفتقد الحقلين','bi-exclamation-diamond',both],['موقف فارغ أو غير محدد','قيمة فارغة أو «غير محدد» فقط','bi-question-circle',unspecified],['نسبة اكتمال الإدخال','مكتمل الحقول ÷ إجمالي النتائج','bi-pie-chart',complete,rows.length?Math.round(complete.length/rows.length*100)+'%':'—']];
+ const groups=new Map();let seq=0;const register=(title,list)=>{const key='g'+seq++;groups.set(key,{title,list});return key;};
+ $('#advancedReportCards').innerHTML=cards.map(([title,sub,icon,list,display])=>`<div class="col-6 col-lg-3"><button type="button" class="report-card advanced-card w-100 text-start" data-report-group="${register(title,list)}"><span class="report-card-icon"><i class="bi ${icon}"></i></span><span class="report-card-value">${display??list.length.toLocaleString('en-US')}</span><span class="report-card-title">${title}</span><span class="report-card-sub">${sub}</span><span class="report-card-action">فتح السجلات <i class="bi bi-arrow-left"></i></span></button></div>`).join('');
+ const count=(title,list)=>`<button class="report-number" data-report-group="${register(title,list)}">${list.length}</button>`;
+ const colleges=[...new Set(rows.map(s=>String(s.college||'').trim()||'بدون كلية'))].sort((a,b)=>a.localeCompare(b,'ar'));
+ $('#reportCollegeMatrix').innerHTML=colleges.map(college=>{const group=rows.filter(s=>(String(s.college||'').trim()||'بدون كلية')===college),done=group.filter(s=>!missingCore(s)),pct=Math.round(done.length/group.length*100);return `<tr><td>${esc(college)}</td><td>${count(college,group)}</td><td>${count('مكتمل الحقول، '+college,done)}</td><td><span class="completion-text">${pct}%</span><div class="completion-track"><span style="width:${pct}%"></span></div></td><td>${count('بدون ثلاثي، '+college,group.filter(s=>isEmpty(s.tri)))}</td><td>${count('بدون قرار، '+college,group.filter(s=>isEmpty(s.decision)))}</td></tr>`;}).join('')||'<tr><td colspan="6">لا توجد نتائج</td></tr>';
+ const statuses=[...new Set(rows.map(s=>canonicalStatus(s.status)||'بدون موقف'))];
+ $('#reportStatusBreakdown').innerHTML=statuses.map(status=>{const group=rows.filter(s=>(canonicalStatus(s.status)||'بدون موقف')===status);return `<div class="report-status-row"><div>${esc(status)}<small class="d-block brand-sub">${Math.round(group.length/rows.length*100)}% من النتائج</small></div>${count(status,group)}</div>`;}).join('')||'<div class="brand-sub">لا توجد نتائج</div>';
+ const quality=[['أكواد مكررة',duplicates(rows,'code'),'عدد السجلات المشتركة في كود، وليس عدد مجموعات التكرار'],['أرقام قومية مكررة',duplicates(rows,'nationalId'),'عدد السجلات المشتركة في رقم قومي غير فارغ'],['رقم قومي غير صالح شكليًا',rows.filter(s=>normalizeNational(s.nationalId).length!==14),'فارغ أو ليس 14 رقمًا، دون التحقق من تاريخ الميلاد أو جهة الإصدار']];
+ $('#reportQuality').innerHTML=quality.map(([title,list,note])=>`<div class="col-md-4"><div class="quality-box"><strong>${title}</strong>${count(title,list)}<div class="brand-sub mt-2">${note}</div></div></div>`).join('');
+ document.querySelectorAll('[data-report-group]').forEach(button=>button.onclick=()=>{const group=groups.get(button.dataset.reportGroup);if(group)openDetailList(group.title,group.list);});
+}
+
+
+/* ═══════════ Excel Export ═══════════ */
+function toExcel(rows, filename){
+  const displayRows=rows.map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,typeof value==='string'?asciiDigits(value):value])));
+  const ws = XLSX.utils.json_to_sheet(displayRows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'البيانات');
+  XLSX.writeFile(wb, filename);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   قراءة Excel — الأعمدة الجديدة:
+   الكلية | كود الطالب | اسم الطالب | الرقم القومي |
+   الرقم الثلاثي العسكري | الموقف من التأجيل | رقم قرار التأجيل
+   ═══════════════════════════════════════════════════════════ */
+
+const HEADER_ALIASES = {
+  college:    ['الكلية','كلية','college','faculty','الكلية/المعهد','الكلية أو المعهد'],
+  code:       ['كود الطالب','كودالطالب','الكود','كود','studentcode','student id','id'],
+  name:       ['اسم الطالب','الاسم','اسمالطالب','studentname','student name','name'],
+  nationalId: ['الرقم القومي','الرقمالقومي','القومي','nationalid','national id','national','الرقم القومى'],
+  tri:        ['الرقم الثلاثي العسكري','الرقمالثلاثيالعسكري','الرقم الثلاثي','الثلاثي','tri','triple','military'],
+  status:     ['الموقف من التأجيل','الموقف','الموقفمنالتأجيل','موقف التأجيل','status'],
+  decision:   ['رقم قرار التأجيل','قرار التأجيل','رقمقرارالتأجيل','القرار','decision','رقم القرار'],
+  __skip:     ['م','مسلسل','serial','no','#','رقم','الرقم'],
+};
+
+function normHeader(s){
+  return String(s || '')
+    .replace(/[\u064B-\u0652\u0640]/g, '')
+    .replace(/[إأآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/[\s\u200f\u200e\u00a0\u202a-\u202e_:.\-()\[\]{}،,\/\\#*]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function matchHeader(headerName){
+  const nh = normHeader(headerName);
+  if (!nh) return null;
+  for (const [key, aliases] of Object.entries(HEADER_ALIASES)) {
+    for (const a of aliases) {
+      const na = normHeader(a);
+      if (na && (na === nh || nh.includes(na) || na.includes(nh))) return key;
+    }
+  }
+  return null;
+}
+
+function findHeaderRow(rows, maxScan = 40){
+  let best = { idx: -1, score: 0, map: {} };
+  const scan = Math.min(rows.length, maxScan);
+  for (let i = 0; i < scan; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const map = {};
+    const used = new Set();
+    Object.keys(r).forEach(h => {
+      if (h === '__row') return;
+      const k = matchHeader(r[h]);
+      if (k && k !== '__skip' && !used.has(k)) { map[h] = k; used.add(k); }
+    });
+    const score = used.size;
+    if (score > best.score) best = { idx: i, score, map };
+  }
+  return best;
+}
+
+async function readExcelFile(file){
+  const buf = await file.arrayBuffer();
+  const wb  = XLSX.read(buf, { type:'array', cellDates: false, raw: true });
+
+  let bestSheet = null;
+  for (const sheetName of wb.SheetNames) {
+    const ws = wb.Sheets[sheetName];
+    const aoa = XLSX.utils.sheet_to_json(ws, { header:1, defval:'', raw:true, blankrows:false });
+    if (!aoa.length) continue;
+    const asObjects = aoa.map((row, ri) => {
+      const o = { __row: ri };
+      row.forEach((cell, ci) => { o['col'+ci] = cell; });
+      return o;
+    });
+    const header = findHeaderRow(asObjects);
+    if (!bestSheet || header.score > bestSheet.header.score) {
+      bestSheet = { sheetName, aoa, asObjects, header };
+    }
+  }
+
+  if (!bestSheet || bestSheet.header.score < 2) {
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const preview = XLSX.utils.sheet_to_json(ws, { header:1, defval:'', raw:true, blankrows:false })
+      .slice(0, 8).map((r, i) => `صف ${i+1}: ` + r.filter(x => x !== '' && x != null).slice(0,10).join(' | ')).join('\n');
+    throw new Error(`لم يتم التعرف على الأعمدة المطلوبة في "${file.name}".\n\nأول صفوف الملف:\n${preview}\n\nالأعمدة المتوقعة: الكلية، كود الطالب، اسم الطالب، الرقم القومي، الرقم الثلاثي العسكري، الموقف من التأجيل، رقم قرار التأجيل`);
+  }
+
+  const { idx: hIdx, map: baseMap } = bestSheet.header;
+  const finalMap = { ...baseMap };
+  [hIdx - 1, hIdx + 1].forEach(rr => {
+    if (rr < 0 || rr >= bestSheet.asObjects.length) return;
+    const row = bestSheet.asObjects[rr];
+    Object.keys(row).forEach(h => {
+      if (h === '__row') return;
+      const k = matchHeader(row[h]);
+      if (k && k !== '__skip' && !Object.values(finalMap).includes(k)) finalMap[h] = k;
+    });
+  });
+
+  const out = [];
+  for (let i = hIdx + 1; i < bestSheet.asObjects.length; i++) {
+    const row = bestSheet.asObjects[i];
+    const rec = {};
+    Object.entries(finalMap).forEach(([colKey, fieldKey]) => {
+      let v = row[colKey];
+      if (v === undefined || v === null) v = '';
+      if (typeof v === 'number') {
+        if (Number.isInteger(v) && Math.abs(v) >= 1e10) v = v.toLocaleString('fullwide', {useGrouping:false});
+        else v = String(v);
+      }
+      rec[fieldKey] = String(v).trim();
+    });
+    if (rec.nationalId) rec.nationalId = normalizeNational(rec.nationalId);
+    const looksLikeHeader = rec.name && normHeader(rec.name).includes('اسم') && normHeader(rec.name).includes('طالب');
+    if (looksLikeHeader) continue;
+    if (!rec.name && !rec.nationalId && !rec.code) continue;
+    out.push(rec);
+  }
+
+  if (!out.length) throw new Error(`لم يتم العثور على بيانات في "${file.name}" بعد صف العناوين (${hIdx + 1}).`);
+  return out;
+}
+
+let pendingRows = [];
+let queuedFiles = [];
+
+function renderQueuedFiles(){
+  const box = $('#fileList');
+  if (!queuedFiles.length) { box.innerHTML = ''; return; }
+  box.innerHTML = queuedFiles.map((f, i) => `
+    <div class="file-pill">
+      <span><i class="bi bi-file-earmark-excel me-2" style="color:var(--brand-1)"></i>${esc(f.name)} <span style="color:var(--muted)">(${Math.round(f.size/1024)} ك.ب)</span></span>
+      <i class="bi bi-x-circle rm" data-rm="${i}" title="إزالة"></i>
+    </div>`).join('') + `
+    <div class="text-center mt-2">
+      <button class="btn btn-accent btn-sm" id="btnAnalyze"><i class="bi bi-search"></i> تحليل الملفات</button>
+      <button class="btn btn-soft btn-sm" id="btnClearFiles">مسح الكل</button>
+    </div>`;
+  box.querySelectorAll('[data-rm]').forEach(el => el.addEventListener('click', () => {
+    queuedFiles.splice(parseInt(el.dataset.rm,10), 1);
+    pendingRows = [];
+    $('#uploadPreview').hidden = true;
+    renderQueuedFiles();
+  }));
+  $('#btnAnalyze').addEventListener('click', analyzeFiles);
+  $('#btnClearFiles').addEventListener('click', () => {
+    queuedFiles = []; pendingRows = [];
+    $('#fileInput').value = '';
+    $('#uploadPreview').hidden = true;
+    renderQueuedFiles();
+  });
+}
+
+function addFiles(files){
+  const allowed = /\.(xlsx|xls|csv)$/i;
+  const arr = Array.from(files).filter(f => allowed.test(f.name));
+  if (arr.length !== files.length) toast('تم تجاهل ملفات غير مدعومة', 'warn', 2500);
+  const remaining = 10 - queuedFiles.length;
+  if (remaining <= 0) { toast('الحد الأقصى 10 ملفات', 'warn'); return; }
+  queuedFiles.push(...arr.slice(0, remaining));
+  if (arr.length > remaining) toast('تم قبول أول ' + remaining + ' ملف فقط', 'warn');
+  pendingRows = [];
+  $('#uploadPreview').hidden = true;
+  renderQueuedFiles();
+}
+
+async function analyzeFiles(){
+  if (!queuedFiles.length) { toast('اختر ملفًا أولًا', 'warn'); return; }
+  const btn = $('#btnAnalyze');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> جارٍ التحليل...';
+  try {
+    pendingRows = [];
+    const errors = [];
+    for (const f of queuedFiles) {
+      try {
+        const recs = await readExcelFile(f);
+        recs.forEach(r => pendingRows.push({ ...r, _file: f.name, _action: '', _msg: '' }));
+      } catch (e) {
+        console.error(e);
+        errors.push(e.message);
+      }
+    }
+    if (errors.length) {
+      toast(errors[0], 'error', 8000);
+      if (errors.length > 1) {
+        console.warn('ملفات لم تُقرأ:', errors.slice(1));
+        toast(`تعذر قراءة ${errors.length - 1} ملف/ملفات أخرى — راجع Console`, 'warn', 5000);
+      }
+    }
+    if (!pendingRows.length) { toast('لم يتم استخراج أي سجلات', 'error'); return; }
+    classifyRows();
+    renderPreview();
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="bi bi-search"></i> تحليل الملفات';
+  }
+}
+
+function classifyRows(){
+  const byNat = new Map();
+  const byCode = new Map();
+  State.students.forEach(s => {
+    if (s.nationalId) byNat.set(s.nationalId, s);
+    if (s.code) byCode.set(String(s.code), s);
+  });
+  const seen = new Set();
+  pendingRows.forEach(r => {
+    const key = r.nationalId || (r.code ? 'code:'+r.code : '');
+    if (!key) { r._action = 'error'; r._msg = 'بدون رقم قومي أو كود'; return; }
+    if (r.nationalId && r.nationalId.length !== 14) { r._action = 'error'; r._msg = 'رقم قومي غير صحيح'; return; }
+    if (seen.has(key)) { r._action = 'error'; r._msg = 'مكرر في الملفات'; return; }
+    seen.add(key);
+    const exists = r.nationalId ? byNat.get(r.nationalId) : byCode.get(String(r.code));
+    r._action = exists ? 'update' : 'new';
+  });
+}
+
+function renderPreview(){
+  const nNew = pendingRows.filter(r => r._action === 'new').length;
+  const nUpd = pendingRows.filter(r => r._action === 'update').length;
+  const nErr = pendingRows.filter(r => r._action === 'error').length;
+  $('#pvNew').textContent = nNew;
+  $('#pvUpd').textContent = nUpd;
+  $('#pvErr').textContent = nErr;
+
+  const preview = pendingRows.slice(0, 300);
+  $('#previewBody').innerHTML = preview.map((r, i) => `
+    <tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td class="small" style="color:var(--muted)">${esc(r._file)}</td>
+      <td class="fw-bold">${esc(r.name||'—')}</td>
+      <td>${esc(r.code||'—')}</td>
+      <td style="font-family:'Courier New',monospace;font-size:12px">${esc(r.nationalId||'—')}</td>
+      <td>${esc(r.college||'—')}</td>
+      <td>${esc(r.tri||'—')}</td>
+      <td>${esc(r.status||'—')}</td>
+      <td>${esc(r.decision||'—')}</td>
+      <td>${r._action === 'new' ? '<span class="badge-soft-success chip">جديد</span>' :
+            r._action === 'update' ? '<span class="badge-soft-info chip">تحديث</span>' :
+            `<span class="badge-soft-danger chip">${esc(r._msg||'خطأ')}</span>`}</td>
+    </tr>`).join('') +
+    (pendingRows.length > 300 ? `<tr><td colspan="10" class="text-center py-2" style="color:var(--muted)">... و ${pendingRows.length - 300} سجل آخر</td></tr>` : '');
+
+  $('#uploadPreview').hidden = false;
+}
+
+async function confirmUpload(){
+  const valid = pendingRows.filter(r => r._action === 'new' || r._action === 'update');
+  if (!valid.length) { toast('لا توجد سجلات صالحة', 'warn'); return; }
+
+  const btn = $('#btnConfirmUpload');
+  btn.disabled = true;
+  $('#progressWrap').style.display = 'block';
+  $('#progressBar').style.width = '0%';
+
+  const byNat = new Map(), byCode = new Map();
+  State.students.forEach(s => {
+    if (s.nationalId) byNat.set(s.nationalId, s);
+    if (s.code) byCode.set(String(s.code), s);
+  });
+
+  let added = 0, updated = 0;
+  const CHUNK = 400;
+  const fileStats = new Map();
+
+  try {
+    for (let i = 0; i < valid.length; i += CHUNK) {
+      const chunk = valid.slice(i, i + CHUNK);
+      const batch = writeBatch(db);
+      for (const r of chunk) {
+        const existing = r.nationalId ? byNat.get(r.nationalId) : byCode.get(String(r.code));
+        const payload = {
+          name: r.name || '', code: r.code || '',
+          nationalId: r.nationalId || '', college: r.college || '',
+          tri: r.tri || '', status: r.status || '', decision: r.decision || '',
+          updatedAt: serverTimestamp(),
+        };
+        if (existing) {
+          const patch = { updatedAt: serverTimestamp() };
+          Object.entries(payload).forEach(([k,v]) => {
+            if (k === 'updatedAt') return;
+            if (!isEmpty(v)) patch[k] = v;
+          });
+          batch.update(doc(db, 'students', existing.id), patch);
+          updated++;
+          const st = fileStats.get(r._file) || { added:0, updated:0 };
+          st.updated++; fileStats.set(r._file, st);
+          if (r.nationalId) byNat.set(r.nationalId, { id: existing.id });
+          if (r.code) byCode.set(String(r.code), { id: existing.id });
+        } else {
+          const docId = r.nationalId || r.code || uid();
+          batch.set(doc(db, 'students', docId), { ...payload, createdAt: serverTimestamp() });
+          added++;
+          const st = fileStats.get(r._file) || { added:0, updated:0 };
+          st.added++; fileStats.set(r._file, st);
+          if (r.nationalId) byNat.set(r.nationalId, { id: docId });
+          if (r.code) byCode.set(String(r.code), { id: docId });
+        }
+      }
+      await batch.commit();
+      const pct = Math.round(((i + chunk.length) / valid.length) * 100);
+      $('#progressBar').style.width = pct + '%';
+    }
+
+    for (const [file, st] of fileStats.entries()) {
+      try {
+        await addDoc(collection(db, 'uploadLogs'), {
+          file, added: st.added, updated: st.updated,
+          errors: pendingRows.filter(r => r._file === file && r._action === 'error').length,
+          user: 'admin', at: serverTimestamp(),
+        });
+      } catch (e) { console.warn('فشل تسجيل الرفع', e); }
+    }
+
+    toast(`تم الحفظ: مضاف ${added} / محدّث ${updated}`, 'success', 5000);
+    pendingRows = []; queuedFiles = [];
+    $('#fileInput').value = '';
+    $('#uploadPreview').hidden = true;
+    renderQueuedFiles();
+    await loadStudents();
+    App.renderDashboard(); App.renderStudents(); App.loadUploadLog();
+  } catch (e) {
+    console.error(e);
+    toast('فشل الحفظ: ' + e.message, 'error', 6000);
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { $('#progressWrap').style.display = 'none'; }, 800);
+  }
+}
+
+async function loadUploadLog(){
+  try {
+    const snap = await getDocs(collection(db, 'uploadLogs'));
+    const logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    logs.sort((a,b) => (b.at?.toMillis?.()||0) - (a.at?.toMillis?.()||0));
+    $('#uploadLogBody').innerHTML = logs.length
+      ? logs.map(l => `
+        <tr>
+          <td style="color:var(--muted)">${l.at?.toDate ? l.at.toDate().toLocaleString('en-US') : '—'}</td>
+          <td class="fw-bold">${esc(l.file||'—')}</td>
+          <td><span class="badge-soft-success chip">${esc(String(l.added ?? 0))}</span></td>
+          <td><span class="badge-soft-info chip">${esc(String(l.updated ?? 0))}</span></td>
+          <td>${l.errors ? `<span class="badge-soft-danger chip">${esc(String(l.errors))}</span>` : '—'}</td>
+          <td style="color:var(--muted)">${esc(l.user||'—')}</td>
+        </tr>`).join('')
+      : `<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">لا يوجد سجل بعد</td></tr>`;
+  } catch (e) { console.error(e); }
+}
+
+/* ═══════════ Backup / Restore ═══════════ */
+async function backup(){
+  try {
+    const snap = await getDocs(collection(db, 'students'));
+    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tagneed-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('تم تصدير النسخة', 'success');
+  } catch (e) { toast('تعذر التصدير', 'error'); }
+}
+
+function restoreFromFile(file){
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data)) throw new Error('صيغة غير صحيحة');
+      if (!confirm(`سيتم استعادة ${data.length} سجل. متابعة؟`)) return;
+      const CHUNK = 400;
+      for (let i = 0; i < data.length; i += CHUNK) {
+        const batch = writeBatch(db);
+        data.slice(i, i+CHUNK).forEach(r => {
+          const id = r.id || r.nationalId || r.code || uid();
+          const { id:_, ...rest } = r;
+          batch.set(doc(db, 'students', id), rest, { merge: true });
+        });
+        await batch.commit();
+      }
+      await loadStudents();
+      App.renderDashboard(); App.renderStudents();
+      toast('تمت الاستعادة', 'success');
+    } catch (e) { toast('تعذر الاستعادة: ' + e.message, 'error'); }
+  };
+  reader.readAsText(file);
+}
+
+async function wipeAll(){
+  if (!confirm('⚠️ سيتم حذف كل بيانات الطلاب نهائيًا. متابعة؟')) return;
+  if (!confirm('تأكيد نهائي: هل أنت متأكد؟')) return;
+  try {
+    const snap = await getDocs(collection(db, 'students'));
+    const ids = snap.docs.map(d => d.id);
+    for (let i = 0; i < ids.length; i += 400) {
+      const batch = writeBatch(db);
+      ids.slice(i, i+400).forEach(id => batch.delete(doc(db, 'students', id)));
+      await batch.commit();
+    }
+    await loadStudents();
+    App.renderDashboard(); App.renderStudents();
+    toast('تم الحذف الكامل', 'success');
+  } catch (e) { toast('تعذر الحذف: ' + e.message, 'error'); }
+}
+
+/* ═══════════ Print ═══════════ */
+function printStudent(id){
+  const s = State.students.find(x => x.id === id);
+  if (!s) return;
+  const w = window.open('', '_blank', 'width=800,height=900');
+  w.document.write(`
+    <html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>بيان حالة تجنيد</title>
+    <style>
+      @page { size: A4; margin: 18mm; }
+      body { font-family: 'Cairo', sans-serif; color:#111; }
+      .header { text-align:center; border-bottom:3px double #333; padding-bottom:10px; margin-bottom:20px; }
+      .header h1 { font-size:20px; margin:0; }
+      .header div { font-size:13px; color:#444; }
+      .title { text-align:center; font-size:18px; font-weight:800; margin:16px 0; }
+      table { width:100%; border-collapse:collapse; margin-top:10px; }
+      td { padding:10px; border-bottom:1px solid #ccc; font-size:14px; }
+      td:first-child { color:#555; width:40%; background:#f7f7f7; }
+      .footer { margin-top:60px; display:flex; justify-content:space-between; font-size:13px; }
+      .sign { border-top:1px solid #333; padding-top:6px; text-align:center; width:180px; }
+      .credit { text-align:center; margin-top:20px; font-size:11px; color:#888; }
+    </style></head><body>
+      <div class="header"><h1>جامعة اللوتس</h1><div>إدارة شئون الطلاب — شئون التجنيد</div></div>
+      <div class="title">بيان حالة تجنيد</div>
+      <table>
+        <tr><td>اسم الطالب</td><td>${esc(s.name||'—')}</td></tr>
+        <tr><td>كود الطالب</td><td>${identifierHTML(s.code)}</td></tr>
+        <tr><td>الرقم القومي</td><td>${identifierHTML(s.nationalId)}</td></tr>
+        <tr><td>الكلية</td><td>${esc(s.college||'—')}</td></tr>
+        <tr><td>الرقم الثلاثي العسكري</td><td>${identifierHTML(s.tri)}</td></tr>
+        <tr><td>الموقف من التأجيل</td><td>${esc(canonicalStatus(s.status)||'—')}</td></tr>
+        <tr><td>رقم قرار التأجيل</td><td>${identifierHTML(s.decision)}</td></tr>
+        <tr><td>التاريخ</td><td>${new Date().toLocaleDateString('ar-EG-u-nu-latn')}</td></tr>
+      </table>
+      <div class="footer">
+        <div class="sign">شئون الطلاب</div>
+        <div class="sign">مدير إدارة شئون الطلاب</div>
+      </div>
+      <div class="credit">تصميم وتطوير م. بولس سمير</div>
+      <script>window.onload = () => window.print();<\/script>
+    </body></html>`);
+  w.document.close();
+}
+
+function printModalList(){printRows($('#modalListTitle').textContent,modalListData);}
+
+/* ═══════════ API عام ═══════════ */
+window.App = {
+  findById: (id) => State.students.find(x => x.id === id),
+  openStudentForm, openStudentView, deleteStudent, openStatModal,
+  printStudent, printModalList,
+  renderDashboard: () => {
+    const stats = computeStats();
+    renderStatsCards(stats); renderQuickSummary(stats); renderPieChart(stats);
+  },
+  renderStudents, renderReports, loadUploadLog,
+  exportReportStatus: () => {
+    const rows = State.students.map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الرقم الثلاثي العسكري': s.tri||'',
+      'الموقف من التأجيل': s.status||'', 'رقم قرار التأجيل': s.decision||'' }));
+    toExcel(rows, 'تقرير_المواقف.xlsx');
+  },
+  exportReportColleges: () => {
+    const rows = State.students.map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الرقم الثلاثي العسكري': s.tri||'',
+      'الموقف من التأجيل': s.status||'', 'رقم قرار التأجيل': s.decision||'' }));
+    toExcel(rows, 'تقرير_الكليات.xlsx');
+  },
+  exportReportNoTri: () => {
+    const rows = State.students.filter(s => isEmpty(s.tri)).map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الموقف': s.status||'' }));
+    toExcel(rows, 'بدون_رقم_ثلاثي.xlsx');
+  },
+  exportReportNoDec: () => {
+    const rows = State.students.filter(s => isEmpty(s.decision)).map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الموقف': s.status||'' }));
+    toExcel(rows, 'بدون_قرار_تأجيل.xlsx');
+  },
+  exportModalList: () => {
+    const rows = modalListData.map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الرقم الثلاثي العسكري': s.tri||'',
+      'الموقف من التأجيل': s.status||'', 'رقم قرار التأجيل': s.decision||'' }));
+    toExcel(rows, 'تقرير_مخصص.xlsx');
+  },
+};
+
+/* ═══════════ Wiring ═══════════ */
+(function wire(){
+  buildNav();
+
+  $('#searchInput').addEventListener('input', (e) => { State.search = e.target.value; renderStudents(); });
+  $('#filterStatus').addEventListener('change', (e) => { State.filterStatus = e.target.value; renderStudents(); });
+  $('#filterCollege').addEventListener('change', (e) => { State.filterCollege = e.target.value; renderStudents(); });
+  $('#sortBy').addEventListener('change', (e) => { State.sortBy = e.target.value; applyFilter(); renderStudentsTable(); });
+  $('#btnAddStudent').addEventListener('click', () => openStudentForm(null));
+  $('#btnExportSearch').addEventListener('click', () => {
+    const rows = State.filtered.map(s => ({
+      'اسم الطالب': s.name||'', 'كود الطالب': s.code||'', 'الرقم القومي': s.nationalId||'',
+      'الكلية': s.college||'', 'الرقم الثلاثي العسكري': s.tri||'',
+      'الموقف من التأجيل': s.status||'', 'رقم قرار التأجيل': s.decision||'' }));
+    toExcel(rows, 'نتائج_البحث.xlsx');
+  });
+
+  $('#btnDownloadTemplate').addEventListener('click', () => {
+    toExcel([{ 'الكلية':'', 'كود الطالب':'', 'اسم الطالب':'', 'الرقم القومي':'',
+      'الرقم الثلاثي العسكري':'', 'الموقف من التأجيل':'', 'رقم قرار التأجيل':'' }], 'نموذج_شئون_التجنيد.xlsx');
+  });
+  $('#dropZone').addEventListener('click', () => $('#fileInput').click());
+  $('#fileInput').addEventListener('change', (e) => { if (e.target.files.length) addFiles(e.target.files); });
+  ['dragover','dragenter'].forEach(ev => $('#dropZone').addEventListener(ev, e => { e.preventDefault(); $('#dropZone').classList.add('drag-over'); }));
+  ['dragleave','drop'].forEach(ev => $('#dropZone').addEventListener(ev, e => { e.preventDefault(); $('#dropZone').classList.remove('drag-over'); }));
+  $('#dropZone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+  $('#btnCancelUpload').addEventListener('click', () => {
+    pendingRows = []; queuedFiles = [];
+    $('#fileInput').value = ''; $('#uploadPreview').hidden = true; renderQueuedFiles();
+  });
+  $('#btnConfirmUpload').addEventListener('click', confirmUpload);
+
+  // Override openStatModal to support new kinds
+  const origOpen = App.openStatModal;
+  App.openStatModal = function(kind, stats){
+    if (kind === 'missing-noTri') {
+      const list = State.students.filter(s => isEmpty(s.tri));
+      modalListData = list;
+      $('#modalListTitle').textContent = 'بدون رقم ثلاثي (' + list.length.toLocaleString('en-US') + ')';
+      renderModalList(list); modalList.show();
+      $('#modalSearch').oninput = (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const f = !q ? list : list.filter(s => (s.name||'').toLowerCase().includes(q) || (s.code||'').includes(q));
+        renderModalList(f);
+      };
+      return;
+    }
+    if (kind === 'missing-noDec') {
+      const list = State.students.filter(s => isEmpty(s.decision));
+      modalListData = list;
+      $('#modalListTitle').textContent = 'بدون قرار تأجيل (' + list.length.toLocaleString('en-US') + ')';
+      renderModalList(list); modalList.show();
+      $('#modalSearch').oninput = (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const f = !q ? list : list.filter(s => (s.name||'').toLowerCase().includes(q) || (s.code||'').includes(q));
+        renderModalList(f);
+      };
+      return;
+    }
+    origOpen(kind, stats);
+  };
+
+  $('#btnPrintStudents').onclick=()=>{applyFilter();printRows('سجلات الطلاب، نتائج الفلاتر الحالية',State.filtered);};
+  $('#btnReportExport').onclick=()=>{renderReports();exportRows(currentReportRows,'نتائج_التقارير.xlsx');};
+  $('#btnReportPrint').onclick=()=>{renderReports();printRows('التقارير، نتائج الفلاتر الحالية',currentReportRows);};
+  for(const [id,key]of [['reportCollege','college'],['reportStatusFilter','status'],['reportCompleteness','completion']])document.getElementById(id).onchange=e=>{reportState[key]=e.target.value;renderReports();};
+
+  // Settings
+  $('#btnBackup').addEventListener('click', backup);
+  $('#btnRestoreBtn').addEventListener('click', () => $('#restoreFile').click());
+  $('#restoreFile').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) restoreFromFile(f); });
+  $('#btnWipe').addEventListener('click', wipeAll);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+      e.preventDefault(); go('students');
+      setTimeout(() => $('#searchInput').focus(), 50);
+    }
+  });
+
+  (async () => { await loadStudents(); go('dashboard'); })();
+})();
+</script>
+</body>
+</html>
