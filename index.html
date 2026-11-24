@@ -834,7 +834,7 @@ await new Promise(res => {
 
 const {
   collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc,
-  writeBatch, serverTimestamp, addDoc
+  writeBatch, serverTimestamp, addDoc, onSnapshot
 } = window.__fb;
 const db = window.__db;
 
@@ -1174,6 +1174,7 @@ const modalStudent = new bootstrap.Modal('#modalStudent');
 const modalList = new bootstrap.Modal('#modalList');
 
 function openStudentView(s){
+  studentModalState={mode:'view',id:s.id};
   $('#modalStudentTitle').textContent = 'بيانات الطالب';
   $('#modalStudentBody').innerHTML = `
     <div class="row g-3">
@@ -1195,6 +1196,7 @@ function openStudentView(s){
 function openStudentForm(existing){
   const isNew = !existing;
   const s = existing || {};
+  studentModalState={mode:isNew?'new':'edit',id:s.id,base:stuSig(s)};
   $('#modalStudentTitle').textContent = isNew ? 'طالب جديد' : 'تعديل بيانات الطالب';
   $('#modalStudentBody').innerHTML = `
     <div class="row g-3">
@@ -1261,6 +1263,10 @@ async function deleteStudent(id){
 
 /* ═══════════ Modal قائمة ═══════════ */
 let modalListData = [];
+let lastModal = null;
+let studentModalState = null;
+const STU_FIELDS=['name','code','nationalId','college','tri','status','decision'];
+const stuSig=o=>JSON.stringify(STU_FIELDS.map(k=>String((o&&o[k])??'')));
 function openStatModal(kind, stats){
   let title = '', list = [];
   if (kind === 'total') { title = 'إجمالي الطلاب'; list = State.students; }
@@ -1310,7 +1316,7 @@ let currentReportRows=[];
 const reportState={college:'',status:'',completion:''};
 function missingCore(s){return isEmpty(s.name)||isEmpty(s.code)||normalizeNational(s.nationalId).length!==14||isEmpty(s.college)||isEmpty(s.tri)||isEmpty(s.status)||isEmpty(s.decision);}
 function duplicates(rows,key){const groups=new Map();for(const s of rows){const value=asciiDigits(s[key]||'').trim();if(!value)continue;const group=groups.get(value)||[];group.push(s);groups.set(value,group);}return rows.filter(s=>{const value=asciiDigits(s[key]||'').trim();return value&&(groups.get(value)?.length||0)>1;});}
-function openDetailList(title,list){modalListData=list.slice();$('#modalListTitle').textContent=asciiDigits(title)+' ('+list.length.toLocaleString('en-US')+')';renderModalList(list);$('#modalSearch').value='';$('#modalSearch').oninput=e=>{const q=asciiDigits(e.target.value).trim().toLowerCase();const result=!q?list:list.filter(s=>[s.name,s.code,s.nationalId,s.college,s.tri,s.decision,canonicalStatus(s.status)].some(v=>asciiDigits(v).toLowerCase().includes(q)));modalListData=result;renderModalList(result);};modalList.show();}
+function openDetailList(title,list){lastModal={type:'detail',title};modalListData=list.slice();$('#modalListTitle').textContent=asciiDigits(title)+' ('+list.length.toLocaleString('en-US')+')';renderModalList(list);$('#modalSearch').value='';$('#modalSearch').oninput=e=>{const q=asciiDigits(e.target.value).trim().toLowerCase();const result=!q?list:list.filter(s=>[s.name,s.code,s.nationalId,s.college,s.tri,s.decision,canonicalStatus(s.status)].some(v=>asciiDigits(v).toLowerCase().includes(q)));modalListData=result;renderModalList(result);};modalList.show();}
 function exportRows(list,name){toExcel(list.map(s=>({'اسم الطالب':s.name||'','كود الطالب':asciiDigits(s.code||''),'الرقم القومي':asciiDigits(s.nationalId||''),'الكلية':s.college||'','الرقم الثلاثي':asciiDigits(s.tri||''),'الموقف':canonicalStatus(s.status),'رقم القرار':asciiDigits(s.decision||'')})),name);}
 function printRows(title,list){if(!list.length){toast('لا توجد سجلات للطباعة','warn');return;}const w=window.open('','_blank','width=1100,height=800');if(!w){toast('اسمح بالنوافذ المنبثقة للطباعة','warn');return;}const rows=list.map((s,i)=>`<tr><td>${i+1}</td><td>${esc(asciiDigits(s.name||'—'))}</td><td>${identifierHTML(s.code)}</td><td>${identifierHTML(s.nationalId)}</td><td>${esc(asciiDigits(s.college||'—'))}</td><td>${identifierHTML(s.tri)}</td><td>${esc(canonicalStatus(s.status)||'—')}</td><td>${identifierHTML(s.decision)}</td></tr>`).join('');w.document.write(`<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${esc(title)}</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial,sans-serif;color:#152b42}h1{text-align:center;font-size:20px}p{text-align:center}table{border-collapse:collapse;width:100%;font-size:10px}th,td{border:1px solid #a6b3be;padding:7px;text-align:right;overflow-wrap:anywhere}th{background:#edf2f5}tr{break-inside:avoid}thead{display:table-header-group}bdi{font-family:Arial,sans-serif}.meta{color:#536a7a;font-size:11px}.credit{text-align:center;font-size:10px;margin-top:16px}</style></head><body><h1>جامعة اللوتس، شئون التجنيد</h1><p>${esc(asciiDigits(title))}</p><p class="meta">عدد السجلات: ${list.length} | ${new Date().toLocaleString('ar-EG-u-nu-latn')}</p><table><thead><tr><th>#</th><th>الاسم</th><th>الكود</th><th>الرقم القومي</th><th>الكلية</th><th>الثلاثي</th><th>الموقف</th><th>القرار</th></tr></thead><tbody>${rows}</tbody></table><div class="credit">تصميم وتطوير المهندس بولس سمير</div><script>window.onload=()=>window.print();<\/script></body></html>`);w.document.close();}
 function renderReports(){
@@ -1331,6 +1337,7 @@ function renderReports(){
  $('#reportStatusBreakdown').innerHTML=statuses.map(status=>{const group=rows.filter(s=>(canonicalStatus(s.status)||'بدون موقف')===status);return `<div class="report-status-row"><div>${esc(status)}<small class="d-block brand-sub">${Math.round(group.length/rows.length*100)}% من النتائج</small></div>${count(status,group)}</div>`;}).join('')||'<div class="brand-sub">لا توجد نتائج</div>';
  const quality=[['أكواد مكررة',duplicates(rows,'code'),'عدد السجلات المشتركة في كود، وليس عدد مجموعات التكرار'],['أرقام قومية مكررة',duplicates(rows,'nationalId'),'عدد السجلات المشتركة في رقم قومي غير فارغ'],['رقم قومي غير صالح شكليًا',rows.filter(s=>normalizeNational(s.nationalId).length!==14),'فارغ أو ليس 14 رقمًا، دون التحقق من تاريخ الميلاد أو جهة الإصدار']];
  $('#reportQuality').innerHTML=quality.map(([title,list,note])=>`<div class="col-md-4"><div class="quality-box"><strong>${title}</strong>${count(title,list)}<div class="brand-sub mt-2">${note}</div></div></div>`).join('');
+ window.__reportGroups=groups;
  document.querySelectorAll('[data-report-group]').forEach(button=>button.onclick=()=>{const group=groups.get(button.dataset.reportGroup);if(group)openDetailList(group.title,group.list);});
 }
 
@@ -1877,6 +1884,7 @@ window.App = {
   // Override openStatModal to support new kinds
   const origOpen = App.openStatModal;
   App.openStatModal = function(kind, stats){
+    lastModal = { type:'stat', kind };
     if (kind === 'missing-noTri') {
       const list = State.students.filter(s => isEmpty(s.tri));
       modalListData = list;
@@ -1922,7 +1930,74 @@ window.App = {
     }
   });
 
-  (async () => { await loadStudents(); go('dashboard'); })();
+  /* ═══════════ تحديث فوري (Realtime) ═══════════ */
+  function activePageId(){ const s=document.querySelector('main > section[data-page]:not([hidden])'); return s?s.dataset.page:'dashboard'; }
+  let rtTimer=null;
+  function refreshActive(which){
+    clearTimeout(rtTimer);
+    rtTimer=setTimeout(()=>{
+      try{
+        const p=activePageId();
+        if(which==='students'){
+          recomputeOptions();
+          App.renderDashboard();
+          if(p==='students') App.renderStudents();
+          if(p==='reports') App.renderReports();
+          refreshOpenModal();
+          refreshStudentModal();
+        } else if(which==='logs' && p==='upload'){ /* handled by log snapshot */ }
+      }catch(e){console.error(e);}
+    },30);
+  }
+  document.getElementById('modalList').addEventListener('hidden.bs.modal',()=>{ lastModal=null; $('#modalSearch').value=''; });
+  function refreshOpenModal(){
+    const el=document.getElementById('modalList');
+    if(!lastModal || !el.classList.contains('show')) return;
+    const search=$('#modalSearch').value;
+    const keep=lastModal;
+    if(keep.type==='stat') App.openStatModal(keep.kind, computeStats());
+    else {
+      let found=null;
+      (window.__reportGroups||new Map()).forEach(g=>{ if(g.title===keep.title) found=g; });
+      openDetailList(keep.title, found?found.list:[]);
+    }
+    if(search){ $('#modalSearch').value=search; $('#modalSearch').dispatchEvent(new Event('input')); }
+  }
+  document.getElementById('modalStudent').addEventListener('hidden.bs.modal',()=>{ studentModalState=null; });
+  function stuNote(html,cls){
+    let n=document.getElementById('studentSyncNote');
+    if(!n){ n=document.createElement('div'); n.id='studentSyncNote'; $('#modalStudentBody').prepend(n); }
+    n.className='alert '+cls+' py-2 mb-3'; n.innerHTML=html;
+  }
+  function refreshStudentModal(){
+    const st=studentModalState;
+    if(!st || st.mode==='new' || !document.getElementById('modalStudent').classList.contains('show')) return;
+    const cur=State.students.find(x=>x.id===st.id);
+    if(st.mode==='view'){
+      if(cur){ openStudentView(cur); }
+      else {
+        stuNote('تم حذف هذا الطالب من مكان آخر.','alert-danger');
+        $('#modalStudentFooter').innerHTML='<button class="btn btn-soft" data-bs-dismiss="modal">إغلاق</button>';
+      }
+      return;
+    }
+    /* edit mode: never touch the inputs, only show a notice */
+    if(!cur){
+      stuNote('تم حذف هذا الطالب من مكان آخر. بياناتك المكتوبة لم تُمس، لكن الحفظ غير متاح لأن السجل لم يعد موجودًا.','alert-danger');
+      const b=document.getElementById('btnSaveStudent'); if(b) b.disabled=true;
+    } else if(stuSig(cur)!==st.base){
+      stuNote('تم تعديل هذا الطالب من مكان آخر. ما كتبته هنا لم يتغير، والحفظ سيستبدل التعديل الخارجي.','alert-warning');
+    }
+  }
+  function startRealtime(){
+    onSnapshot(collection(db,'students'), snap=>{
+      State.students = snap.docs.map(d=>({id:d.id,...d.data()}));
+      refreshActive('students');
+    }, e=>{ console.error(e); toast('انقطع التحديث الفوري: '+e.message,'error'); });
+    onSnapshot(collection(db,'uploadLogs'), ()=>{ App.loadUploadLog(); },
+      e=>console.error(e));
+  }
+  (async () => { await loadStudents(); go('dashboard'); startRealtime(); })();
 })();
 </script>
 </body>
